@@ -6,19 +6,22 @@ import { vibrateBtn } from "../vibrateBtn/ButtonVibrate"
 const SplashOnboarding = () => {
     const [onboarding, setOnBoarding] = useState(true)
 
-  return (
-    <div className="absolute flex flex-col items-center justify-between p-8 inset-0 top-0 left-0 h-screen w-full bg-white">
-      <p>INI ONBOARDING</p>
-      <Image 
-        src={'/Assets/OnBoarding/boarding1.png'}
-        width={240}
-        height={240}
-        className="object-cover animate-pulse"
-        alt="Boarding"
-      />
-      <button className="w-full h-13 bg-[var(--accentColor)] text-white font-bold rounded-full cursor-pointer" onClick={vibrateBtn}>Selanjutnya</button>
-    </div>
-  )
+    return (
+        <div className="absolute flex flex-col items-center justify-between p-8 inset-0 top-0 left-0 h-screen w-full bg-white">
+            <span className="flex flex-col gap-1 text-center pt-8">
+                <h1 className="text-2xl font-bold">E-Learning School</h1>
+                <p>Belajar matematika Sekolah Menengah Pertama (SMP) menyenangkan bersama sch-learning!</p>
+            </span>
+            <Image
+                src={'/Assets/OnBoarding/boarding1.png'}
+                width={240}
+                height={240}
+                className="object-cover animate-pulse"
+                alt="Boarding"
+            />
+            <button className="w-full h-13 bg-[var(--accentColor)] text-white font-bold rounded-full cursor-pointer" onClick={vibrateBtn}>Selanjutnya</button>
+        </div>
+    )
 }
 
 export default SplashOnboarding
