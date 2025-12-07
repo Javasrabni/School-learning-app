@@ -1,7 +1,7 @@
 "use client"
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
-const vibrate = async () => {
+export const vibrateBtn = async () => {
   await Haptics.impact({
     style: ImpactStyle.Heavy,
   });
@@ -9,7 +9,7 @@ const vibrate = async () => {
 
 export default function ButtonVibrate() {
   return (
-    <button onClick={vibrate}>
+    <button onClick={vibrateBtn}>
       Vibrate
     </button>
   );
