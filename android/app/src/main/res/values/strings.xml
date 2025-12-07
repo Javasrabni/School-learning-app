@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">school-learning-app</string>
+    <string name="title_activity_main">school-learning-app</string>
+    <string name="package_name">com.sch.learnapp</string>
+    <string name="custom_url_scheme">com.sch.learnapp</string>
+</resources>
