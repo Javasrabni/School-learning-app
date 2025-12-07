@@ -2,15 +2,12 @@
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 export const vibrateBtn = async () => {
-  await Haptics.impact({
-    style: ImpactStyle.Heavy,
-  });
+  try {
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      navigator.vibrate(100); // langsung Vibrator Android
+    }
+    await Haptics.impact({ style: ImpactStyle.Heavy });
+  } catch (err) {
+    console.error("Vibrate error:", err);
+  }
 };
-
-export default function ButtonVibrate() {
-  return (
-    <button onClick={vibrateBtn}>
-      Vibrate
-    </button>
-  );
-}
