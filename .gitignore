@@ -43,3 +43,4 @@ android/.cxx/
 # --- OPTIONAL ---
 # Kalau kamu tidak ingin commit file web export
 public/build/
+android/app/release-key.jks
