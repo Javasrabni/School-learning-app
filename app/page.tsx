@@ -1,14 +1,15 @@
+import SignedPage from "@/components/signedPage/SignedPage";
 import SplashOnboarding from "@/components/splashOrOnboardingScreen/splashOnboarding";
-import Link from "next/link";
+import { cookies } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies()
+  const token = cookieStore.get("token")?.value;
+  const loggedIn = Boolean(token)
 
- 
-  return (
-    <div className="p-8 relative">
-      <SplashOnboarding />
-      <p>tes</p>
-      <Link href="/auth/register">LOGIN</Link>
-    </div>
-  );
+  if(!loggedIn) {
+    return <SplashOnboarding />
+  }
+  
+ return <SignedPage/>
 }

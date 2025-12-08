@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Poppins, Inter} from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
+import { UserProvider } from "@/context/userDataCookie";
 
 const InterFont = Inter({
   subsets: ["latin"],
@@ -28,9 +29,11 @@ export default function RootLayout({
       <body
         className={`${InterFont.variable} ${PoppinsFont.variable} antialiased`}
       >
-        <div className="m-auto max-w-[32rem] min-h-screen h-full w-full bg-[var(--accentColor)]">
-          {children}
-        </div>
+        <UserProvider>
+          <div className="m-auto max-w-[32rem] min-h-screen h-full w-full bg-white">
+            {children}
+          </div>
+        </UserProvider>
       </body>
     </html>
   );

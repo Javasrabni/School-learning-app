@@ -63,6 +63,7 @@ const RegisterPage = ({
                     </button>
                 </div>
                 {/* <label htmlFor="Password" className='text-xs text-stone-400'>Password setidaknya lebih dari 8 karakter</label> */}
+
             </div>
         </div>
     )

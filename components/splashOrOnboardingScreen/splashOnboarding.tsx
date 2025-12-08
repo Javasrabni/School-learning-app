@@ -5,8 +5,10 @@ import { vibrateBtn } from "../vibrateBtn/ButtonVibrate"
 import { ChevronLeftIcon, XIcon } from "lucide-react"
 import RegisterPage from "../auth/register/page"
 import LoginPage from "../auth/login/page"
+import { useUser } from "@/context/userDataCookie"
 
 const SplashOnboarding = () => {
+    const {user} = useUser()
     const [progressBar, setProgressBar] = useState(1)
 
     // USER REGISTER!!!!
@@ -14,6 +16,9 @@ const SplashOnboarding = () => {
     const [email, setEmail] = useState("")
     const [grade, setGrade] = useState("")
     const [password, setPassword] = useState("")
+
+    // USER LOGIN
+    const [identifier, setIdentifier] = useState('')
 
     // LOGIN/REGISTER STATUS
     const [onRegister, setOnRegister] = useState(true)
@@ -37,6 +42,7 @@ const SplashOnboarding = () => {
         // JANGAN lakukan apa pun di luar sini
     }, [])
 
+    // USER REGISTER
     async function PostRegisterAcc() {
         const UsernameRegister = document.getElementById('UsernameRegister')
         const PasswordField = document.getElementById('Password')
@@ -66,6 +72,7 @@ const SplashOnboarding = () => {
             if (EmailRegister) {
                 EmailRegister.style.outline = "1px solid tomato"
             }
+            return
         }
 
         try {
@@ -102,11 +109,42 @@ const SplashOnboarding = () => {
         }
     }
 
+    // USER LOGIN 
+    async function PostLoginUser() {
+        try {
+            const res = await fetch('/api/login', {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    usernameOrEmail: identifier.toLowerCase(),
+                    password
+                })
+            })
+            const data = await res.json()
+            console.log(data)
+            if(!res.ok) {
+                alert(data.message)
+                return
+            } else {
+                setUsername("")
+                setEmail("")
+                setPassword("")
+                window.location.reload()
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     // BUTTON CTA
     function handleButton() {
         vibrateBtn()
-        if (progressBar === 3) {
+        if (progressBar === 3 && onRegister) {
             PostRegisterAcc()
+            return
+        } else if (progressBar === 3 && !onRegister) {
+            PostLoginUser()
+            return
         } else {
             setProgressBar(prev => prev + 1)
         }
@@ -120,14 +158,14 @@ const SplashOnboarding = () => {
     ]
 
     return (
-        <div className="absolute flex flex-col items-center justify-between py-8 inset-0 top-0 left-0 h-screen w-full bg-white">
+        <div className={`absolute flex flex-col items-center justify-between py-8 inset-0 top-0 h-screen w-full bg-white ${user ? "opacity-0 left-[-32rem]" : "opacity-100 left-0 "} `}>
             {/* Container slider */}
             <div className="overflow-hidden flex-1 flex items-center w-full">
                 <div className={`w-full px-8 absolute z-10 left-[50%] translate-x-[-50%] transition-all duration-200 ease-in-out ${showNotif && progressBar === 3 && !onRegister ? 'top-12 opacity-100' : "top-[-64px] opacity-0"}`}>
                     <div id="toast-success" className="flex items-center w-full justify-between p-4 text-gray-700 bg-green-100 rounded-lg shadow border border-green-300" role="alert">
                         <div className="flex flex-row gap-1 items-center">
                             <div className="inline-flex items-center justify-center shrink-0 w-7 h-7 text-green-600 bg-green-200 rounded">
-                                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" /></svg>
+                                <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" /></svg>
                                 <span className="sr-only">Check icon</span>
                             </div>
                             <div className="ms-3 text-sm font-normal">Daftar berhasil, silakan login!</div>
@@ -159,16 +197,22 @@ const SplashOnboarding = () => {
                             {i.no === 3 && (
                                 <>
                                     {onRegister ? (
-                                        <RegisterPage
-                                            username={username}
-                                            setUsername={setUsername}
-                                            email={email}
-                                            setEmail={setEmail}
-                                            grade={grade}
-                                            setGrade={setGrade}
-                                            password={password}
-                                            setPassword={setPassword}
-                                        />
+                                        <>
+                                            <RegisterPage
+                                                username={username}
+                                                setUsername={setUsername}
+                                                email={email}
+                                                setEmail={setEmail}
+                                                grade={grade}
+                                                setGrade={setGrade}
+                                                password={password}
+                                                setPassword={setPassword}
+                                            />
+                                            <div className="w-full text-left mt-[-12px]">
+                                                <p className=' text-xs'>sudah punya akun? <span className="text-blue-500 cursor-pointer" onClick={() => setOnRegister(false)}>Login</span> </p>
+                                            </div>
+
+                                        </>
                                         // <div className="w-full h-full flex flex-col gap-4">
                                         //     <input type="text" className="bg-stone-100 h-12 rounded-sm px-4 text-sm" placeholder="Nama Kamu" />
                                         //     <input type="text" className="bg-stone-100 h-12 rounded-sm px-4 text-sm" placeholder="kamu@gmail.com" />
@@ -176,7 +220,17 @@ const SplashOnboarding = () => {
                                         // </div>
 
                                     ) : (
-                                        <LoginPage />
+                                        <>
+                                            <LoginPage
+                                                identifier={identifier}
+                                                setIdentifier={setIdentifier}
+                                                password={password}
+                                                setPassword={setPassword}
+                                            />
+                                            <div className="w-full text-left mt-[-12px]">
+                                                <p className=' text-xs'>belum punya akun? <span className="text-blue-500 cursor-pointer" onClick={() => setOnRegister(true)}>Daftar</span> </p>
+                                            </div>
+                                        </>
                                     )}
                                 </>
                             )}
@@ -214,7 +268,7 @@ const SplashOnboarding = () => {
                         } ${progressBar === 3 ? "bg-stone-900 text-white" : "bg-[var(--accentColor)] text-white"}`}
                     onClick={handleButton}
                 >
-                    {progressBar === 3 ? "Daftar" : "Selanjutnya"}
+                    {progressBar === 3 ? onRegister ? "Daftar" : 'Login' : "Selanjutnya"}
                 </button>
             </div>
 
