@@ -3,12 +3,14 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { vibrateBtn } from "../vibrateBtn/ButtonVibrate"
 import { ChevronLeftIcon, XIcon } from "lucide-react"
-import RegisterPage from "../auth/register/page"
-import LoginPage from "../auth/login/page"
+import RegisterPage from "../auth/register/registerPage"
+import LoginPage from "../auth/login/loginPage"
 import { useUser } from "@/context/userDataCookie"
+import { useRouter } from "next/navigation"
 
 const SplashOnboarding = () => {
-    const {user} = useUser()
+    const router = useRouter()
+    const { user } = useUser()
     const [progressBar, setProgressBar] = useState(1)
 
     // USER REGISTER!!!!
@@ -58,6 +60,7 @@ const SplashOnboarding = () => {
             if (UsernameRegister) {
                 UsernameRegister.style.outline = "1px solid tomato"
             }
+            return
         }
 
         if (!password || password.length <= 8) {
@@ -65,6 +68,7 @@ const SplashOnboarding = () => {
             if (PasswordField) {
                 PasswordField.style.outline = "1px solid tomato"
             }
+            return
         }
 
         if (!email || !email.includes("@gmail.com")) {
@@ -114,7 +118,7 @@ const SplashOnboarding = () => {
         try {
             const res = await fetch('/api/login', {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     usernameOrEmail: identifier.toLowerCase(),
                     password
@@ -122,14 +126,15 @@ const SplashOnboarding = () => {
             })
             const data = await res.json()
             console.log(data)
-            if(!res.ok) {
+            if (!res.ok) {
                 alert(data.message)
                 return
             } else {
                 setUsername("")
                 setEmail("")
                 setPassword("")
-                window.location.reload()
+                router.refresh()
+                window.location.replace("/dashboard")
             }
         } catch (error) {
             console.error(error)

@@ -1,15 +1,16 @@
-import SignedPage from "@/components/signedPage/SignedPage";
-import SplashOnboarding from "@/components/splashOrOnboardingScreen/splashOnboarding";
-import { cookies } from "next/headers";
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
+import HomeWrapper from "@/components/Home/HomeWrapper"
 
 export default async function Home() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("token")?.value;
-  const loggedIn = Boolean(token)
+    const cookieStore = await cookies()
+    const token = cookieStore.get("token")?.value
 
-  if(!loggedIn) {
-    return <SplashOnboarding />
-  }
-  
- return <SignedPage/>
+    // Kalau sudah login, PAKSA redirect ke dashboard
+    if (token) {
+        redirect("/dashboard")
+    }
+
+    // Kalau belum login, tampilkan onboarding
+    return <HomeWrapper />
 }

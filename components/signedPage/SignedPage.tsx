@@ -6,7 +6,10 @@ const SignedPage = () => {
     console.log(user)
     return (
         <div>
-             <p>{user?.username}</p>
+            <p>ini di dashboard</p>
+            {user && (
+                <p>{user.username}</p>
+            )}
         </div>
     )
 }
