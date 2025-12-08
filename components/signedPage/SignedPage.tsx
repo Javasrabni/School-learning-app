@@ -6,10 +6,8 @@ const SignedPage = () => {
     console.log(user)
     return (
         <div>
-            <p>ini di dashboard</p>
-            {user && (
-                <p>{user.username}</p>
-            )}
+            <h1 className='font-bold '>Halo, {user?.username}!</h1>
+            <p className='text-sm text-stone-400 font-[inter]'>Siap belajar hari ini?</p>
         </div>
     )
 }

@@ -7,7 +7,9 @@ export default function Dashboard() {
     return (
         <div className="w-full h-screen flex flex-col items-center justify-between">
             <Navbar />
-            <SignedPage />
+            <div className="w-full h-full p-6">
+                <SignedPage />
+            </div>
             <Footer />
         </div>
     )
