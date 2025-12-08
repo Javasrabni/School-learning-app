@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.sch.learnapp',
-  appName: 'SchLrn-app',
+  appId: 'com.sch.mathemagic',
+  appName: 'Mathemagic',
   webDir: 'public',
   server: {
     "url": "https://school-learning-app.vercel.app",

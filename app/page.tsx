@@ -1,16 +1,26 @@
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
+"use client"
+import {  useRouter } from "next/navigation"
 import HomeWrapper from "@/components/Home/HomeWrapper"
+import { useEffect, useState } from "react"
+import { getToken } from "@/utils/storage"
 
-export default async function Home() {
-    const cookieStore = await cookies()
-    const token = cookieStore.get("token")?.value
+export default function Home() {
+    const router = useRouter()
+    const [loading, setLoading] = useState(true)
 
-    // Kalau sudah login, PAKSA redirect ke dashboard
-    if (token) {
-        redirect("/dashboard")
-    }
+    useEffect(()=> {
+        const checkLogin = async ()=> {
+            const token = await getToken()
+            if(token) {
+                router.replace('/dashboard')
+            } else {
+                setLoading(false)
+            }
+        }
+        checkLogin()
+    }, [])
 
-    // Kalau belum login, tampilkan onboarding
+    if(loading) return null; //Loading 
+
     return <HomeWrapper />
 }

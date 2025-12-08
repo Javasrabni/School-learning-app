@@ -7,6 +7,7 @@ import RegisterPage from "../auth/register/registerPage"
 import LoginPage from "../auth/login/loginPage"
 import { useUser } from "@/context/userDataCookie"
 import { useRouter } from "next/navigation"
+import { setToken } from "@/utils/storage"
 
 const SplashOnboarding = () => {
     const router = useRouter()
@@ -133,6 +134,11 @@ const SplashOnboarding = () => {
                 setUsername("")
                 setEmail("")
                 setPassword("")
+
+                if(data.success && data.token) {
+                    await setToken(data.token)
+                }
+
                 router.refresh()
                 window.location.replace("/dashboard")
             }

@@ -55,6 +55,7 @@ export async function POST(req: Request) {
     const res = NextResponse.json({
       success: true,
       message: "Login Berhasil",
+      token
     });
 
     res.cookies.set("token", token, {

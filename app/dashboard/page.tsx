@@ -1,20 +1,25 @@
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import SignedPage from "@/components/signedPage/SignedPage"
+'use client';
+import { useUser } from "@/context/userDataCookie";
+import SignedPage from "@/components/signedPage/SignedPage";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function Dashboard() {
-    const cookieStore = await cookies()
-    const token = cookieStore.get("token")?.value
+export default function Dashboard() {
+  const { user, loading } = useUser();
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
 
-    // Kalau belum login, redirect balik ke home (onboarding)
-    if (!token) {
-        redirect("/")
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.replace("/"); // belum login
+      } else {
+        setReady(true); // sudah login
+      }
     }
+  }, [user, loading, router]);
 
-    // Kalau sudah login, tampilkan aplikasi
-    return (
-        <div className="p-8 relative">
-            <SignedPage />
-        </div>
-    )
+  if (!ready) return null;
+
+  return <SignedPage />;
 }
