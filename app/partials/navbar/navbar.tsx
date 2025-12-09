@@ -8,7 +8,7 @@ const Navbar = async () => {
    const username = user?.username || null;
 
   return (
-    <div className='w-full h-16 flex flex-row items-center justify-between p-6'>
+    <div className='fixed top-0 left-0  w-full h-14 bg-white flex flex-row items-center justify-between p-6'>
       <div className='w-24 h-6 relative'>
         <Image
           src='/Assets/onPage/logo.png'

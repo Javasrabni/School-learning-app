@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { User2Icon, TrophyIcon, FlameIcon, CheckCircleIcon } from "lucide-react";
 import { useUser } from "@/context/userDataCookie";
 import PerformanceChart from "@/components/PerformanceChart";
@@ -14,6 +15,12 @@ type ProgressType = {
   isRead: boolean;
   score: number;
   createdAt?: string;
+};
+
+const fadeUp = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4 }
 };
 
 export default function ProfileClient() {
@@ -57,39 +64,44 @@ export default function ProfileClient() {
   if (userLoading) return <div className="p-6">Loading profile...</div>;
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-gray-50">
-      <div className="max-w-4xl mx-auto p-6">
+    <motion.div
+      className="w-full h-screen overflow-y-auto bg-gray-50"
+      {...fadeUp}
+    >
+      <motion.div className="max-w-4xl mx-auto p-6" {...fadeUp}>
         
         {/* HEADER */}
-        <div className="flex items-center justify-between gap-4 mb-6">
+        <motion.div className="flex items-center justify-between gap-4 mb-6" {...fadeUp}>
           
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
+          <motion.div className="flex items-center gap-4" {...fadeUp}>
+            <motion.div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 shrink-0" {...fadeUp}>
               <img
                 src={user?.avatar || "/default-avatar.png"}
                 alt="avatar"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div {...fadeUp}>
               <h2 className="text-xl font-semibold text-gray-900">
                 {user?.username || user?.email || "User"}
               </h2>
               <p className="text-sm text-gray-600">
                 Level {user?.level ?? level} • {user?.points ?? totalScore} poin
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <AvatarUpload onUploaded={refreshUser} />
-        </div>
+          <motion.div {...fadeUp}>
+            <AvatarUpload onUploaded={refreshUser} />
+          </motion.div>
+        </motion.div>
 
         {/* STATS + CHART */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" {...fadeUp}>
           
-          <div className="md:col-span-2 bg-white p-4 rounded shadow">
-            <div className="flex items-center justify-between mb-3">
+          <motion.div className="md:col-span-2 bg-white p-4 rounded shadow" {...fadeUp}>
+            <motion.div className="flex items-center justify-between mb-3" {...fadeUp}>
               <h3 className="text-lg font-semibold text-gray-800">Statistik Anda</h3>
 
               <button
@@ -104,11 +116,11 @@ export default function ProfileClient() {
               >
                 Refresh
               </button>
-            </div>
+            </motion.div>
 
             {/* STAT CARDS */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="p-3 bg-blue-50 rounded">
+            <motion.div className="grid grid-cols-2 gap-3 mb-4" {...fadeUp}>
+              <motion.div className="p-3 bg-blue-50 rounded" {...fadeUp}>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs text-gray-600">Total Poin</div>
@@ -118,9 +130,9 @@ export default function ProfileClient() {
                   </div>
                   <CheckCircleIcon width={32} className="text-blue-600" />
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="p-3 bg-green-50 rounded">
+              <motion.div className="p-3 bg-green-50 rounded" {...fadeUp}>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs text-gray-600">Materi Dibaca</div>
@@ -130,9 +142,9 @@ export default function ProfileClient() {
                   </div>
                   <FlameIcon width={32} className="text-orange-500" />
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="p-3 bg-yellow-50 rounded">
+              <motion.div className="p-3 bg-yellow-50 rounded" {...fadeUp}>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs text-gray-600">Level</div>
@@ -142,9 +154,9 @@ export default function ProfileClient() {
                   </div>
                   <User2Icon width={32} className="text-yellow-600" />
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="p-3 bg-purple-50 rounded">
+              <motion.div className="p-3 bg-purple-50 rounded" {...fadeUp}>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs text-gray-600">Streak</div>
@@ -154,34 +166,34 @@ export default function ProfileClient() {
                   </div>
                   <TrophyIcon width={32} className="text-purple-600" />
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             <PerformanceChart data={progress} />
-          </div>
+          </motion.div>
 
           {/* RINGKASAN */}
-          <div className="bg-white p-4 rounded shadow">
+          <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
             <h4 className="font-semibold text-gray-800 mb-3">Ringkasan</h4>
             <div className="space-y-3">
 
-              <div className="flex items-center justify-between">
+              <motion.div className="flex items-center justify-between" {...fadeUp}>
                 <span className="text-sm text-gray-600">Jawaban Benar</span>
                 <span className="font-medium text-green-700">{totalCorrect}</span>
-              </div>
+              </motion.div>
 
-              <div className="flex items-center justify-between">
+              <motion.div className="flex items-center justify-between" {...fadeUp}>
                 <span className="text-sm text-gray-600">Jawaban Salah</span>
                 <span className="font-medium text-red-600">{totalWrong}</span>
-              </div>
+              </motion.div>
 
-              <div className="flex items-center justify-between">
+              <motion.div className="flex items-center justify-between" {...fadeUp}>
                 <span className="text-sm text-gray-600">Materi Dibaca</span>
                 <span className="font-medium">{materials.length}</span>
-              </div>
+              </motion.div>
 
               {/* Progress bar */}
-              <div>
+              <motion.div {...fadeUp}>
                 <p className="text-xs text-gray-500 mb-1">Progress ke level berikutnya</p>
                 <div className="w-full bg-gray-200 h-3 rounded overflow-hidden">
                   <div
@@ -190,10 +202,10 @@ export default function ProfileClient() {
                   ></div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">{nextLevelProgress} / 50 XP</p>
-              </div>
+              </motion.div>
 
               {/* Badges */}
-              <div>
+              <motion.div {...fadeUp}>
                 <h5 className="text-sm font-semibold text-gray-700">Badges</h5>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {badges.length ? (
@@ -209,27 +221,27 @@ export default function ProfileClient() {
                     <p className="text-xs text-gray-500">Belum ada badges</p>
                   )}
                 </div>
-              </div>
+              </motion.div>
 
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* QUIZ HISTORY + LEADERBOARD */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          <div className="bg-white p-4 rounded shadow">
+        <motion.div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6" {...fadeUp}>
+          <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
             <h4 className="font-semibold mb-3 text-gray-800">Riwayat Quiz</h4>
             <QuizHistory userId={user?._id} />
-          </div>
+          </motion.div>
 
-          <div className="bg-white p-4 rounded shadow">
+          <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
             <h4 className="font-semibold mb-3 text-gray-800">Leaderboard</h4>
             <Leaderboard />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* MATERI DIBACA */}
-        <div className="bg-white p-4 rounded shadow mb-8">
+        <motion.div className="bg-white p-4 rounded shadow mb-8" {...fadeUp}>
           <h4 className="font-semibold mb-3 text-gray-800">Materi yang sudah dibaca</h4>
 
           {materials.length === 0 ? (
@@ -242,18 +254,18 @@ export default function ProfileClient() {
                 ).length;
 
                 return (
-                  <li key={idx} className="p-3 rounded bg-gray-50">
+                  <motion.li key={idx} className="p-3 rounded bg-gray-50" {...fadeUp}>
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-gray-800">{m}</span>
                       <span className="text-sm text-gray-600">{count} bagian</span>
                     </div>
-                  </li>
+                  </motion.li>
                 );
               })}
             </ul>
           )}
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
