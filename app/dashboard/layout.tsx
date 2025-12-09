@@ -1,5 +1,5 @@
 import React from 'react'
-import Footer from '../partials/footer'
+import Footer from '../partials/footer/footer'
 import Navbar from '../partials/navbar'
 
 const DashboardLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
