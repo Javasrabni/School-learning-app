@@ -16,7 +16,8 @@ const NavbarClient = ({ username }: Props) => {
     };
     return (
         <div>
-            {pathname === "/dashboard/profil" && <p className='text-sm font-medium text-gray-700'>{capitalizeWords(username)}</p>}
+            {pathname === "/dashboard/profil" && username
+            && <p className='text-sm font-medium text-gray-700'>{capitalizeWords(username)}</p>}
         </div>
     )
 }
