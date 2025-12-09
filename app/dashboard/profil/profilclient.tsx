@@ -261,10 +261,19 @@ function SummaryRow({
   value: number;
   color?: string;
 }) {
+  const colorClass: Record<string, string> = {
+    green: "text-green-700",
+    red: "text-red-700",
+    blue: "text-blue-700",
+    yellow: "text-yellow-700",
+    orange: "text-orange-700",
+    purple: "text-purple-700",
+  };
+
   return (
     <div className="flex items-center justify-between">
       <span className="text-sm text-gray-600">{label}</span>
-      <span className={`font-medium ${color ? `text-${color}-700` : ""}`}>
+      <span className={`font-medium ${color ? colorClass[color] : ""}`}>
         {value}
       </span>
     </div>
