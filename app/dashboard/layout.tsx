@@ -1,6 +1,6 @@
 import React from 'react'
 import Footer from '../partials/footer/footer'
-import Navbar from '../partials/navbar'
+import Navbar from '../partials/navbar/navbar'
 
 const DashboardLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     return (
