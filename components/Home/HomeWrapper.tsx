@@ -1,6 +1,5 @@
 "use client";
 
-import { Capacitor } from "@capacitor/core";
 import SplashOnboarding from "@/components/splashOrOnboardingScreen/splashOnboarding";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,15 +9,15 @@ export default function HomeWrapper() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
 
-  // Pastikan WebView dan plugin siap
+  // Step 1 — Pastikan React sudah mount
   useEffect(() => {
     const timer = setTimeout(() => {
       setReady(true);
-    }, 250); // 250ms = aman untuk Android
-
+    }, 200); 
     return () => clearTimeout(timer);
   }, []);
 
+  // Step 2 — Check login dengan try/catch FULL
   useEffect(() => {
     if (!ready) return;
 
@@ -26,11 +25,10 @@ export default function HomeWrapper() {
       try {
         let accessToken = null;
 
-        // Pastikan plugin Storage siap
-        if (Capacitor.isNativePlatform()) {
+        try {
           accessToken = await getToken();
-        } else {
-          accessToken = await getToken();
+        } catch (err) {
+          console.log("getToken gagal (ditangani):", err);
         }
 
         if (accessToken) {
@@ -38,21 +36,35 @@ export default function HomeWrapper() {
           return;
         }
 
-        // Gunakan absolute URL untuk Android (penting)
-        const base = process.env.NEXT_PUBLIC_API_URL;
-        const res = await fetch(`${base}/api/refresh`, {
+        const apiBase = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiBase) {
+          console.error("API URL belum diset");
+          return;
+        }
+
+        const res = await fetch(`${apiBase}/api/refresh`, {
           method: "POST",
           credentials: "include",
         });
 
+        if (!res.ok) {
+          console.log("Refresh token gagal:", res.status);
+          return;
+        }
+
         const data = await res.json();
 
         if (data?.accessToken) {
-          await setToken(data.accessToken);
+          try {
+            await setToken(data.accessToken);
+          } catch (err) {
+            console.log("setToken gagal:", err);
+          }
+
           router.replace("/dashboard");
         }
       } catch (err) {
-        console.error("Login check error:", err);
+        console.error("FATAL: checkLogin error:", err);
       }
     };
 
@@ -60,7 +72,7 @@ export default function HomeWrapper() {
   }, [ready]);
 
   return (
-    <div className="w-screen h-screen overflow-hidden relative">
+    <div className="w-full h-full relative">
       <SplashOnboarding />
     </div>
   );
