@@ -1,47 +1,49 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 import SplashOnboarding from "@/components/splashOrOnboardingScreen/splashOnboarding";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { getToken, setToken } from "@/utils/authStorage";
 
 export default function HomeWrapper() {
-  const router = useRouter();
+    const router = useRouter();
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      // 1. Cek token lokal dulu
-      const accessToken = await getToken();
-      if (accessToken) {
-        router.replace("/dashboard");
-        return;
-      }
+    useEffect(() => {
+        const checkLogin = async () => {
+            // 1. Cek token lokal dulu (sangat cepat ±1ms)
+            const accessToken = await getToken();
 
-      // 2. Cek refresh token ke server publik (harus pakai URL full)
-      try {
-        const res = await fetch("https://school-learning-app.vercel.app/api/refresh", {
-          method: "POST",
-          credentials: "include",
-        });
-        const data = await res.json();
+            if (accessToken) {
+                router.replace("/dashboard");
+                return;
+            }
 
-        if (data?.accessToken) {
-          await setToken(data.accessToken);
-          router.replace("/dashboard");
-        }
-      } catch (err) {
-        console.error("Refresh token failed:", err);
-      }
-    };
+            // 2. Refresh token, dilakukan di background
+            try {
+                const res = await fetch("/api/refresh", {
+                    method: "POST",
+                    credentials: "include",
+                });
 
-    // Jalankan sedikit delay supaya UI muncul dulu
-    const timer = setTimeout(checkLogin, 50);
-    return () => clearTimeout(timer);
-  }, [router]);
+                const data = await res.json();
 
-  // UI langsung tampil tanpa delay
-  return (
-    <div className="p-8 relative">
-      <SplashOnboarding />
-    </div>
-  );
+                if (data?.accessToken) {
+                    await setToken(data.accessToken);
+                    router.replace("/dashboard");
+                }
+            } catch (err) {
+                console.error("Refresh failed:", err);
+            }
+        };
+
+        // *Jalankan setelah 10–80ms supaya UI tampil dulu*
+        setTimeout(checkLogin, 50);
+    }, [router]);
+
+    // UI langsung tampil tanpa delay
+    return (
+        <div className="p-8 relative">
+            <SplashOnboarding />
+        </div>
+    );
 }
