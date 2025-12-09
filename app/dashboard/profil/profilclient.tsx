@@ -1,20 +1,20 @@
-"use client"
+// "use client"
 
-import { useState, } from 'react'
+// import { useState, } from 'react'
 import { User2Icon, TrophyIcon, FlameIcon, CheckCircleIcon } from 'lucide-react'
 
-interface Stat {
-    label: string
-    value: number
-    icon: React.ReactNode
-}
+// interface Stat {
+//     label: string
+//     value: number
+//     icon: React.ReactNode
+// }
 
 const ProfileClient = () => {
-    const [loading, setLoading] = useState(false)
+    // const [loading, setLoading] = useState(false)
 
 
     // Dummy data untuk statistik (bisa diganti dengan data dari API atau state management)
-    const [stats, setStats] = useState<Stat[]>([
+    const stats=([
         { label: "Latihan Soal", value: 150, icon: <CheckCircleIcon width={24} /> },
         { label: "Membaca Materi", value: 7, icon: <FlameIcon width={24} /> },
         // { label: "Pencapaian"   , value: 12, icon: <TrophyIcon width={24} /> },
@@ -40,8 +40,8 @@ const ProfileClient = () => {
             {/* Karakter 3D Interaktif dari Spline */}
 
             <div className="w-full h-[80%] overflow-hidden rounded-lg relative">
-                {!loading && (
-                    <div className="relative w-full h-full z-10">
+                {/* {!loading && ( */}
+                    {/* <div className="relative w-full h-full z-10">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                             <button
                                 type="button"
@@ -54,14 +54,14 @@ const ProfileClient = () => {
                                 </p>
                             </button>
                         </div>
-                    </div>
+                    </div> */}
 
-                )}
+                {/* )} */}
                 <iframe src='https://my.spline.design/draganddropbookpencilschoolcopy-14b15323c1a437273560c531ee1b834b/' frameBorder="0"
                     width="100%"
                     height="600px"
-                    onLoad={() => setLoading(true)}
-                    style={{ opacity: loading ? 1 : 0 }}
+                    // onLoad={() => setLoading(true)}
+                    // style={{ opacity: loading ? 1 : 0 }}
                     className="absolute top-[-40px] left-0 outline-none border-none transition-opacity duration-500"></iframe>
 
                 {/* <iframe
