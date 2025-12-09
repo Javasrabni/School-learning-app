@@ -19,12 +19,11 @@ export async function GET() {
     }
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-
     const { payload } = await jwtVerify(token, secret);
 
-    // Ambil user lengkap dari DB
-    const user = await userAccount.findById(payload.id)
-      .select("-password") // jangan kirim password
+    const user = await userAccount
+      .findById(payload.id)
+      .select("-password")
       .lean();
 
     if (!user) {
@@ -36,15 +35,22 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: "Token valid",
-      user,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar ?? "",
+        createdAt: user.createdAt,
+        level: user.level ?? 1,
+        exp: user.exp ?? 0,
+        streak: user.streak ?? 0
+      }
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("ME API ERROR:", error);
-
     return NextResponse.json(
-      { success: false, message: "Token tidak valid atau expired." },
+      { success: false, message: "Token tidak valid." },
       { status: 401 }
     );
   }

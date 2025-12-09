@@ -1,80 +1,259 @@
-// "use client"
+"use client";
 
-// import { useState, } from 'react'
-import { User2Icon, TrophyIcon, FlameIcon, CheckCircleIcon } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { User2Icon, TrophyIcon, FlameIcon, CheckCircleIcon } from "lucide-react";
+import { useUser } from "@/context/userDataCookie";
+import PerformanceChart from "@/components/PerformanceChart";
+import QuizHistory from "@/components/QuizHistory";
+import Leaderboard from "@/components/Leaderboard";
+import AvatarUpload from "@/components/AvatarUpload";
 
-// interface Stat {
-//     label: string
-//     value: number
-//     icon: React.ReactNode
-// }
+type ProgressType = {
+  materialTitle: string;
+  subTopicIndex: number;
+  isRead: boolean;
+  score: number;
+  createdAt?: string;
+};
 
-const ProfileClient = () => {
-    // const [loading, setLoading] = useState(false)
+export default function ProfileClient() {
+  const { user, loading: userLoading, refreshUser } = useUser();
+  const [progress, setProgress] = useState<ProgressType[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchProgress = async () => {
+      if (!user?._id) return setLoading(false);
 
-    // Dummy data untuk statistik (bisa diganti dengan data dari API atau state management)
-    const stats=([
-        { label: "Latihan Soal", value: 150, icon: <CheckCircleIcon width={24} /> },
-        { label: "Membaca Materi", value: 7, icon: <FlameIcon width={24} /> },
-        // { label: "Pencapaian"   , value: 12, icon: <TrophyIcon width={24} /> },
-    ])
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/progress?userId=${user._id}`);
+        const data: ProgressType[] = await res.json();
+        setProgress(data || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProgress();
+  }, [user]);
 
-    return (
-        <div className="w-full relative">
-            {/* Statistik */}
-            <div className="absolute z-10 bottom-0 w-full max-w-md bg-white rounded-lg p-6">
-                {/* <h2 className="text-lg font-semibold text-gray-800 mb-4">Statistik Anda</h2> */}
-                <div className="space-y-4">
-                    {stats.map((stat, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                            <div className="flex items-center space-x-3">
-                                <div className="text-blue-600">{stat.icon}</div>
-                                <span className="text-sm font-medium text-gray-700">{stat.label}</span>
-                            </div>
-                            <span className="text-lg font-bold text-blue-600">{stat.value}</span>
-                        </div>
-                    ))}
+  const totalScore = progress.reduce((acc, p) => acc + (p.score || 0), 0);
+  const totalRead = progress.filter((p) => p.isRead).length;
+  const level = Math.floor(totalScore / 50) + 1;
+  const nextLevelProgress = totalScore % 50;
+  const streak = Math.min(totalRead, 30);
+  const totalCorrect = progress.filter((p) => p.score >= 10).length;
+  const totalWrong = progress.filter((p) => p.score === 0 && p.isRead).length;
+  const materials = Array.from(new Set(progress.map((p) => p.materialTitle)));
+
+  const badges = [
+    ...(totalRead >= 10 ? ["Materi Novice"] : []),
+    ...(totalRead >= 30 ? ["Materi Expert"] : []),
+    ...(totalScore >= 100 ? ["Quiz Master"] : [])
+  ];
+
+  if (userLoading) return <div className="p-6">Loading profile...</div>;
+
+  return (
+    <div className="w-full h-screen overflow-y-auto bg-gray-50">
+      <div className="max-w-4xl mx-auto p-6">
+        
+        {/* HEADER */}
+        <div className="flex items-center justify-between gap-4 mb-6">
+          
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
+              <img
+                src={user?.avatar || "/default-avatar.png"}
+                alt="avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {user?.username || user?.email || "User"}
+              </h2>
+              <p className="text-sm text-gray-600">
+                Level {user?.level ?? level} • {user?.points ?? totalScore} poin
+              </p>
+            </div>
+          </div>
+
+          <AvatarUpload onUploaded={refreshUser} />
+        </div>
+
+        {/* STATS + CHART */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          
+          <div className="md:col-span-2 bg-white p-4 rounded shadow">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold text-gray-800">Statistik Anda</h3>
+
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  fetch(`/api/progress?userId=${user?._id}`)
+                    .then((r) => r.json())
+                    .then((d) => setProgress(d))
+                    .finally(() => setLoading(false));
+                }}
+                className="text-sm px-2 py-1 bg-gray-100 rounded"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {/* STAT CARDS */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="p-3 bg-blue-50 rounded">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-600">Total Poin</div>
+                    <div className="text-xl font-bold text-blue-700">
+                      {user?.points ?? totalScore}
+                    </div>
+                  </div>
+                  <CheckCircleIcon width={32} className="text-blue-600" />
                 </div>
+              </div>
+
+              <div className="p-3 bg-green-50 rounded">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-600">Materi Dibaca</div>
+                    <div className="text-xl font-bold text-green-700">
+                      {totalRead}
+                    </div>
+                  </div>
+                  <FlameIcon width={32} className="text-orange-500" />
+                </div>
+              </div>
+
+              <div className="p-3 bg-yellow-50 rounded">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-600">Level</div>
+                    <div className="text-xl font-bold text-yellow-700">
+                      {user?.level ?? level}
+                    </div>
+                  </div>
+                  <User2Icon width={32} className="text-yellow-600" />
+                </div>
+              </div>
+
+              <div className="p-3 bg-purple-50 rounded">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-600">Streak</div>
+                    <div className="text-xl font-bold text-purple-700">
+                      {user?.streak ?? streak}
+                    </div>
+                  </div>
+                  <TrophyIcon width={32} className="text-purple-600" />
+                </div>
+              </div>
             </div>
-            {/* Karakter 3D Interaktif dari Spline */}
 
-            <div className="w-full h-[80%] overflow-hidden rounded-lg relative">
-                {/* {!loading && ( */}
-                    {/* <div className="relative w-full h-full z-10">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <button
-                                type="button"
-                                className="inline-flex items-center text-body text-white rounded-md bg-blue-600 focus:ring-4 focus:ring-neutral-tertiary-soft shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none gap-2"
-                            >
+            <PerformanceChart data={progress} />
+          </div>
 
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                <p>
-                                    Loading
-                                </p>
-                            </button>
-                        </div>
-                    </div> */}
+          {/* RINGKASAN */}
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold text-gray-800 mb-3">Ringkasan</h4>
+            <div className="space-y-3">
 
-                {/* )} */}
-                <iframe src='https://my.spline.design/draganddropbookpencilschoolcopy-14b15323c1a437273560c531ee1b834b/' frameBorder="0"
-                    width="100%"
-                    height="600px"
-                    // onLoad={() => setLoading(true)}
-                    // style={{ opacity: loading ? 1 : 0 }}
-                    className="absolute top-[-40px] left-0 outline-none border-none transition-opacity duration-500"></iframe>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Jawaban Benar</span>
+                <span className="font-medium text-green-700">{totalCorrect}</span>
+              </div>
 
-                {/* <iframe
-            src="https://my.spline.design/molang3dcopy-742cc29ac3aa041deb88ce0f81820bef/"
-            frameBorder="0"
-            width="100%"
-            height="430"
-            className="absolute top-[-30px] left-0"
-          ></iframe> */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Jawaban Salah</span>
+                <span className="font-medium text-red-600">{totalWrong}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Materi Dibaca</span>
+                <span className="font-medium">{materials.length}</span>
+              </div>
+
+              {/* Progress bar */}
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Progress ke level berikutnya</p>
+                <div className="w-full bg-gray-200 h-3 rounded overflow-hidden">
+                  <div
+                    className="h-full bg-blue-600"
+                    style={{ width: `${(nextLevelProgress / 50) * 100}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{nextLevelProgress} / 50 XP</p>
+              </div>
+
+              {/* Badges */}
+              <div>
+                <h5 className="text-sm font-semibold text-gray-700">Badges</h5>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {badges.length ? (
+                    badges.map((b, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-1 bg-yellow-200 rounded text-xs text-yellow-900"
+                      >
+                        {b}
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-500">Belum ada badges</p>
+                  )}
+                </div>
+              </div>
+
             </div>
+          </div>
+        </div>
 
-        </div >
-    )
+        {/* QUIZ HISTORY + LEADERBOARD */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold mb-3 text-gray-800">Riwayat Quiz</h4>
+            <QuizHistory userId={user?._id} />
+          </div>
+
+          <div className="bg-white p-4 rounded shadow">
+            <h4 className="font-semibold mb-3 text-gray-800">Leaderboard</h4>
+            <Leaderboard />
+          </div>
+        </div>
+
+        {/* MATERI DIBACA */}
+        <div className="bg-white p-4 rounded shadow mb-8">
+          <h4 className="font-semibold mb-3 text-gray-800">Materi yang sudah dibaca</h4>
+
+          {materials.length === 0 ? (
+            <p className="text-sm text-gray-500">Belum membaca materi.</p>
+          ) : (
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {materials.map((m, idx) => {
+                const count = progress.filter(
+                  (p) => p.materialTitle === m && p.isRead
+                ).length;
+
+                return (
+                  <li key={idx} className="p-3 rounded bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-800">{m}</span>
+                      <span className="text-sm text-gray-600">{count} bagian</span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default ProfileClient

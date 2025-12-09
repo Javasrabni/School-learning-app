@@ -20,7 +20,7 @@ const Navbar = async () => {
       </div>
 
       {/* Pass data ke client component */}
-      <NavbarClient username={username} />
+      {/* <NavbarClient username={username} /> */}
     </div>
   );
 };

@@ -1,25 +1,31 @@
 'use client'
-import React, { useState, useEffect, createContext, useContext } from 'react'
+import React, { useState, useEffect, createContext, useContext } from "react";
 
-interface UserData {
-    _id: string,
-    username: string,
-    email: string,
-    avatar?: string,
-    createdAt: string
-}
+export type UserData = {
+    _id: string;
+    username?: string;
+    email?: string;
+    avatar?: string | null;
+    createdAt?: string;
+    // fields tambahan yang kita gunakan di UI
+    grade?: string;
+    level?: number;
+    points?: number;
+    badges?: string[];
+    streak?: number;
+};
 
-interface UserContextType {
+type UserContextType = {
     user: UserData | null;
     loading: boolean;
-    refreshUser: () => void;
-}
+    refreshUser: () => Promise<void>;
+};
 
 const UserContext = createContext<UserContextType>({
     user: null,
     loading: true,
-    refreshUser: () => {},
-})
+    refreshUser: async () => { },
+});
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<UserData | null>(null);
@@ -40,9 +46,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         } finally {
             setLoading(false);
         }
-    }
+    };
+
 
     useEffect(() => {
+        // fetch only on client mount
         fetchUser();
     }, []);
 
@@ -50,7 +58,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         <UserContext.Provider value={{ user, loading, refreshUser: fetchUser }}>
             {children}
         </UserContext.Provider>
-    )
-}
+    );
+};
 
-export const useUser = () => useContext(UserContext)
+export const useUser = () => useContext(UserContext);

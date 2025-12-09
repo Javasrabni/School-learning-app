@@ -11,7 +11,7 @@ const FooterClient = () => {
 
     const data = [
         { no: 1, label: "Home", path: "/dashboard", icon: <HomeIcon width={18} /> },
-        { no: 2, label: "Progress", path: "/dashboard", icon: <FlameIcon width={18} /> },
+        { no: 2, label: "Progress", path: "/dashboard/progress", icon: <FlameIcon width={18} /> },
         { no: 3, label: "Profil", path: "/dashboard/profil", icon: <User2Icon width={18} /> },
     ]
 
@@ -33,7 +33,7 @@ const FooterClient = () => {
     return (
         <div 
             ref={containerRef}
-            className='relative w-full h-18 flex flex-row items-center justify-around px-8 border-t border-stone-200'
+            className='fixed bottom-0 left-0 bg-white w-full h-14 flex flex-row items-center justify-around px-8 border-t border-stone-200'
         >
             {/* HIGHLIGHT ANIMASI */}
             <div
