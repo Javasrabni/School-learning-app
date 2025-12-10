@@ -43,7 +43,7 @@ const RegisterPage = ({
             </div>
 
             {/* Email */}
-            <input type="text" id='EmailRegister' className="bg-stone-100 h-12 rounded-sm px-4 text-sm outline-none" value={email} onChange={(e) => { setEmail(e.target.value); if (EmailField) EmailField.style.outline = 'none' }} placeholder={"kamu@gmail.com"} />
+            <input type="text" id='EmailRegister' className="bg-stone-100 h-12 rounded-sm px-4 text-sm outline-none" value={email} onChange={(e) => { setEmail(e.target.value); if (EmailField) EmailField.style.outline = 'none' }} placeholder={"email@gmail.com"} />
 
             {/* Kelas */}
             <div className='flex flex-row gap-1 items-center justify-between bg-stone-100 rounded-sm pr-4 w-full'>
@@ -57,12 +57,13 @@ const RegisterPage = ({
             {/* Password */}
             <div>
                 <div className='flex flex-row gap-1 items-center justify-between bg-stone-100 rounded-sm pr-4 w-full' id='Password' ref={PasswordFiled}>
-                    <input type={viewPassInput ? 'text' : 'password'} className="bg-stone-100 h-12 rounded-sm px-4 text-sm outline-none w-full" value={password} onChange={(e) => { setPassword(e.target.value); if (PasswordFiled.current) { PasswordFiled.current.style.outline = 'none' } }} placeholder={"Password Mathemagic"} minLength={8} />
+                    <input type={viewPassInput ? 'text' : 'password'} className="bg-stone-100 h-12 rounded-sm px-4 text-sm outline-none w-full" value={password} onChange={(e) => { setPassword(e.target.value); if (PasswordFiled.current) { PasswordFiled.current.style.outline = 'none' } }} placeholder={"Buat password"} minLength={8} />
                     <button onClick={() => setViewPassInput(prev => !prev)}>
                         {viewPassInput ? <EyeClosedIcon width={16} className='text-stone-400' /> : <EyeIcon width={16} className='text-stone-400' />}
                     </button>
                 </div>
-                {/* <label htmlFor="Password" className='text-xs text-stone-400'>Password setidaknya lebih dari 8 karakter</label> */}
+                
+                <label htmlFor="Password" className='text-xs text-stone-400'>"Password khusus untuk aplikasi ini, jangan pakai password email.”</label>
 
             </div>
         </div>
