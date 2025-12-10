@@ -29,7 +29,7 @@ export default function ProfileClient() {
 
   useEffect(() => {
     if (!user?._id) {
-      setProgress([]); 
+      setProgress([]);
       return;
     }
 
@@ -70,7 +70,7 @@ export default function ProfileClient() {
                 <div className="w-full h-full bg-gray-300 animate-pulse" />
               ) : (
                 <img
-                  src={user?.avatar || "/default-avatar.png"}
+                  src={user?.avatar || "/Assets/onPage/defaultProfile.png"}
                   className="w-full h-full object-cover"
                   alt=""
                 />
@@ -85,7 +85,7 @@ export default function ProfileClient() {
                 </>
               ) : (
                 <>
-                  <h2 className="text-xl font-semibold">{user?.username}</h2>
+                  <h2 className="text-lg font-semibold">{user?.username}</h2>
                   <p className="text-sm text-gray-600">
                     Level {user?.level ?? level} • {user?.points ?? totalScore} poin
                   </p>
@@ -127,7 +127,7 @@ export default function ProfileClient() {
           ].map((item, index) => (
             <motion.div
               key={index}
-              className={`p-4 bg-${item.color}-50 rounded shadow`}
+              className={`p-4 bg-${item.color}-50 rounded-xl border border-${item.color}-200`}
               {...fadeUp}
             >
               {progress === null ? (
@@ -148,8 +148,8 @@ export default function ProfileClient() {
         </motion.div>
 
         {/* CHART */}
-        <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
-          <h3 className="text-lg font-semibold mb-3">Statistik Anda</h3>
+        <motion.div className="bg-white p-4 rounded-xl shadow" {...fadeUp}>
+          <h3 className="text-md font-semibold mb-3">Statistik Anda</h3>
 
           {progress === null ? (
             <div className="h-40 bg-gray-200 animate-pulse rounded"></div>
@@ -159,7 +159,7 @@ export default function ProfileClient() {
         </motion.div>
 
         {/* SUMMARY */}
-        <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
+        <motion.div className="bg-white p-4 rounded-xl shadow" {...fadeUp}>
           <h4 className="font-semibold mb-3">Ringkasan</h4>
 
           {progress === null ? (
@@ -177,9 +177,9 @@ export default function ProfileClient() {
               {/* Progress bar */}
               <div className="mt-3">
                 <p className="text-xs text-gray-500 mb-1">Progress ke Level Berikutnya</p>
-                <div className="w-full bg-gray-200 h-3 rounded">
+                <div className="w-full bg-gray-200 h-3 rounded-full">
                   <div
-                    className="h-full bg-blue-600"
+                    className="h-full bg-blue-500 rounded-full"
                     style={{ width: `${(nextLevelProgress / 50) * 100}%` }}
                   ></div>
                 </div>
@@ -205,7 +205,7 @@ export default function ProfileClient() {
         </motion.div>
 
         {/* QUIZ HISTORY */}
-        <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
+        <motion.div className="bg-white p-4 rounded-xl shadow" {...fadeUp}>
           <h4 className="font-semibold mb-3">Riwayat Quiz</h4>
           {progress === null ? (
             <div className="h-24 bg-gray-200 animate-pulse rounded"></div>
@@ -215,14 +215,14 @@ export default function ProfileClient() {
         </motion.div>
 
         {/* LEADERBOARD */}
-        <motion.div className="bg-white p-4 rounded shadow" {...fadeUp}>
+        <motion.div className="bg-white p-4 rounded-xl shadow" {...fadeUp}>
           <h4 className="font-semibold mb-3">Leaderboard</h4>
           <Leaderboard />
         </motion.div>
 
         {/* MATERI */}
-        <motion.div className="bg-white p-4 rounded shadow mb-8" {...fadeUp}>
-          <h4 className="font-semibold mb-3">Materi yang sudah dibaca</h4>
+        <motion.div className="bg-white p-4 rounded-xl shadow mb-8" {...fadeUp}>
+          <h4 className="font-semibold  mb-3">Materi yang sudah dibaca</h4>
 
           {progress === null ? (
             <div className="h-20 bg-gray-200 animate-pulse rounded"></div>
@@ -238,7 +238,7 @@ export default function ProfileClient() {
                 return (
                   <li key={idx} className="p-3 rounded bg-gray-50">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium">{m}</span>
+                      <span className="font-regular text-sm">{m}</span>
                       <span className="text-sm text-gray-600">{count} bagian</span>
                     </div>
                   </li>
@@ -262,8 +262,8 @@ function SummaryRow({
   color?: string;
 }) {
   const colorClass: Record<string, string> = {
-    green: "text-green-700",
-    red: "text-red-700",
+    green: "text-green-500",
+    red: "text-red-500",
     blue: "text-blue-700",
     yellow: "text-yellow-700",
     orange: "text-orange-700",
@@ -271,9 +271,10 @@ function SummaryRow({
   };
 
   return (
+    
     <div className="flex items-center justify-between">
       <span className="text-sm text-gray-600">{label}</span>
-      <span className={`font-medium ${color ? colorClass[color] : ""}`}>
+      <span className={`font-bold ${color ? colorClass[color] : ""}`}>
         {value}
       </span>
     </div>

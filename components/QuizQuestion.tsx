@@ -2,12 +2,13 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircle, XCircle, RotateCcw } from "lucide-react";
 
 type QuizQuestionProps = {
   question: string;
   options: string[];
   correctAnswer: string;
-  materialTitle?: string; // optional here, main update done by parent
+  materialTitle?: string;
   subTopicIndex?: number;
   onScoreUpdate: (score: number) => Promise<void> | void;
 };
@@ -24,10 +25,13 @@ export default function QuizQuestion({
 
   const handleAnswer = async (option: string) => {
     if (locked) return;
+    
     setSelected(option);
     setLocked(true);
+
     const score = option === correctAnswer ? 10 : 0;
     setFeedback(option === correctAnswer ? "Benar!" : `Salah. Jawaban: ${correctAnswer}`);
+
     try {
       await onScoreUpdate(score);
     } catch (err) {
@@ -42,31 +46,94 @@ export default function QuizQuestion({
   };
 
   return (
-    <div className="mt-4 p-3 border rounded bg-white">
-      <p className="font-semibold mb-2">{question}</p>
-      <div className="flex flex-col gap-2">
-        {options.map((opt, i) => (
-          <button
-            key={i}
-            onClick={() => handleAnswer(opt)}
-            disabled={!!selected}
-            className={`p-2 text-left border rounded ${selected === opt ? "bg-blue-100" : "hover:bg-gray-100"}`}
-          >
-            {opt}
-          </button>
-        ))}
+    <div className="space-y-4">
+      {/* Question */}
+      <p className="text-lg font-semibold text-gray-900">{question}</p>
+
+      {/* Options */}
+      <div className="space-y-3">
+        {options.map((opt, i) => {
+          const isSelected = selected === opt;
+          const isCorrect = opt === correctAnswer;
+          
+          // Determine styling based on state
+          let buttonStyle = "";
+          let icon = null;
+
+          if (locked) {
+            // After answer is locked (submitted)
+            if (isCorrect) {
+              // Show correct answer in green
+              buttonStyle = "bg-green-50 border-green-500 text-green-900 shadow-sm";
+              icon = <CheckCircle className="w-5 h-5 text-green-600" />;
+            } else if (isSelected && !isCorrect) {
+              // Show wrong selected answer in red
+              buttonStyle = "bg-red-50 border-red-500 text-red-900 shadow-sm";
+              icon = <XCircle className="w-5 h-5 text-red-600" />;
+            } else {
+              // Other options are grayed out
+              buttonStyle = "bg-gray-50 border-gray-200 text-gray-500 opacity-60";
+            }
+          } else {
+            // Before submission (not locked)
+            buttonStyle = "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 cursor-pointer";
+          }
+
+          return (
+            <button
+              key={i}
+              onClick={() => handleAnswer(opt)}
+              disabled={locked}
+              className={`
+                w-full p-4 rounded-lg border-2 text-left transition-all
+                flex items-center justify-between gap-3
+                ${buttonStyle}
+                ${locked ? 'cursor-default' : ''}
+              `}
+            >
+              <span className="flex-1 font-medium">{opt}</span>
+              
+              {/* Show icon only after submission (when locked) */}
+              {locked && icon}
+            </button>
+          );
+        })}
       </div>
 
-      {feedback && <p className="mt-2 font-medium">{feedback}</p>}
-
-      <div className="mt-3">
-        <button
-          onClick={handleRetry}
-          className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200"
+      {/* Feedback Message */}
+      {feedback && (
+        <div
+          className={`p-4 rounded-lg border ${
+            feedback === "Benar!"
+              ? "bg-green-50 border-green-200"
+              : "bg-red-50 border-red-200"
+          }`}
         >
-          Ulangi Jawaban
-        </button>
-      </div>
+          <p
+            className={`font-semibold ${
+              feedback === "Benar!" ? "text-green-900" : "text-red-900"
+            }`}
+          >
+            {feedback === "Benar!" 
+              ? "✓ Jawaban Benar! +10 poin" 
+              : `✗ ${feedback}`
+            }
+          </p>
+        </div>
+      )}
+
+      {/* Retry Button */}
+      {locked && (
+        <div className="flex">
+          <button
+            onClick={handleRetry}
+            className="px-6 py-2.5 rounded-lg text-sm font-medium bg-gray-600 text-white hover:bg-gray-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Ulangi Jawaban
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -38,7 +38,7 @@
     "lib/db.js",
     "out/types/**/*.ts",
     "out/dev/types/**/*.ts"
-  ],
+, "tsconfig.seed.json", "seedMaterials.ts"  ],
   "exclude": [
     "node_modules"
   ]

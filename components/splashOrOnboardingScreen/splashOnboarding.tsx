@@ -136,7 +136,7 @@ const SplashOnboarding = () => {
                 setEmail("")
                 setPassword("")
 
-                if(data.success) {
+                if (data.success) {
                     await setToken(data.accessToken);
                 }
                 refreshUser()
@@ -193,8 +193,17 @@ const SplashOnboarding = () => {
                     {OnBoardingData.map(i => (
                         <span key={i.no} className={`flex-shrink-0 w-full flex ${i.no === 2 ? "flex-col-reverse" : "flex-col"} items-center gap-8 justify-center px-8 transition-opacity duration-700 ease-in-out ${progressBar === i.no ? "opacity-100" : "opacity-0"}`}>
                             <span className="flex flex-col gap-1 text-center">
-                                <h1 className="font-bold">{i.h1}</h1>
-                                <p className="text-stone-400 text-sm">{i.p}</p>
+                                {onRegister ? (
+                                    <>
+                                        <h1 className="font-bold">{i.h1}</h1>
+                                        <p className="text-stone-400 text-sm">{i.p}</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <h1 className="font-bold">Silakan Login!</h1>
+                                        <p className="text-stone-400 text-sm">Masuk dengan akun kamu yang telah terdaftar</p>
+                                    </>
+                                )}
                             </span>
                             {i.image && (
                                 <Image
