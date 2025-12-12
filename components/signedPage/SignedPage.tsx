@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/userDataCookie";
 import { SearchIcon, SettingsIcon, TrophyIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 type ProgressType = {
     materialTitle: string;
@@ -52,12 +54,17 @@ export default function SignedPage() {
             transition={{ duration: 0.4 }}
         >
             {/* Greeting — TAMPIL LANGSUNG (tidak perlu data API) */}
-            <div className="bg-[var(--accentColor)] w-full h-full flex justify-between flex-col py-8 px-6 gap-4">
-                <div>
-                    <h1 className="font-bold text-lg text-white">
-                        Halo, {user?.username || "User"}!
-                    </h1>
-                    <p className="text-sm text-gray-300">Siap belajar hari ini?</p>
+            <div className="bg-[var(--accentColor)] w-full h-full flex justify-between flex-col pt-8 pb-6 px-6 gap-4">
+                <div className="w-full h-full flex flex-row justify-between items-center gap-0">
+                    <div>
+                        <h1 className="font-bold text-lg text-white">
+                            Halo, {user?.username || "User"}!
+                        </h1>
+                        <p className="text-sm text-gray-300">Siap belajar hari ini?</p>
+                    </div>
+                    <Link href={'/dashboard/profil'} className="w-12 h-12 ">
+                        <img src={user?.avatar || '/Assets/onPage/defaultProfile.png'} alt="" width={'100%'} className="outline-1 outline-gray-400 rounded-full object-cover"/>
+                    </Link>
                 </div>
                 <div className="flex items-center justify-between gap-2">
                     <div className="w-full h-full flex items-center gap-4 bg-gray-100 rounded-lg px-4">
@@ -65,7 +72,7 @@ export default function SignedPage() {
                         <input type="text" className="w-full h-13 outline-none border-none text-sm" placeholder="Cari materi" />
                     </div>
                     <div className="shrink-0 w-13 h-13 rounded-lg flex items-center justify-center bg-white">
-                        <SettingsIcon width={16} className="text-gray-400"/>
+                        <SettingsIcon width={16} className="text-gray-400" />
                     </div>
                 </div>
             </div>

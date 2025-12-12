@@ -2,8 +2,11 @@
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { FlameIcon, HomeIcon, User2Icon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 const FooterClient = () => {
+    const pathname = usePathname()
+
     const [activeTab, setActiveTab] = useState(1) // Ubah dari 0 ke 1 agar Home aktif secara default
     const [highlightStyle, setHighlightStyle] = useState({ left: 0, width: 0 })
     const tabRefs = useRef<(HTMLAnchorElement | null)[]>([])
@@ -15,6 +18,15 @@ const FooterClient = () => {
         { no: 3, label: "Profil", path: "/dashboard/profil", icon: <User2Icon width={18} /> },
     ]
 
+    useEffect(() => {
+        if (pathname === data[0].path) {
+            setActiveTab(data[0].no)
+        } else if (pathname === data[1].path) {
+            setActiveTab(data[1].no)
+        } else if (pathname === data[2].path) {
+            setActiveTab(data[2].no)
+        }
+    }, [pathname])
     useEffect(() => {
         if (tabRefs.current[activeTab - 1] && containerRef.current) {
             const rect = tabRefs.current[activeTab - 1]!.getBoundingClientRect()
@@ -31,7 +43,7 @@ const FooterClient = () => {
     }, [activeTab])
 
     return (
-        <div 
+        <div
             ref={containerRef}
             className='fixed bottom-0 left-0 bg-white w-full h-14 flex flex-row items-center justify-around px-8 border-t border-stone-200'
         >
@@ -62,7 +74,7 @@ const FooterClient = () => {
                     <p className={`${i.no === activeTab && 'text-blue-600'} text-xs font-[inter] select-none`}>{i.label}</p>
                 </Link>
             )}
-        </div>  
+        </div>
     )
 }
 
