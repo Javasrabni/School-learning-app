@@ -8,6 +8,7 @@ import LoginPage from "../auth/login/loginPage"
 import { useUser } from "@/context/userDataCookie"
 import { useRouter } from "next/navigation"
 import { setToken } from "@/utils/authStorage";
+import Spinner from "../loadSpinner/loadSpinner"
 // import { SecureStoragePlugin } from "@aparajita/capacitor-secure-storage"
 
 const SplashOnboarding = () => {
@@ -27,6 +28,8 @@ const SplashOnboarding = () => {
     // LOGIN/REGISTER STATUS
     const [onRegister, setOnRegister] = useState(true)
     const [showNotif, setShowNotif] = useState(false)
+    const [loadingAuth, setLoadingAuth] = useState(false)
+
 
     // CLOSEPOPUP
     // useEffect(() => {
@@ -82,6 +85,7 @@ const SplashOnboarding = () => {
         }
 
         try {
+            setLoadingAuth(true)
             const res = await fetch('/api/register', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -112,12 +116,15 @@ const SplashOnboarding = () => {
             }
         } catch (error) {
             console.error(error)
+        } finally {
+            setLoadingAuth(false)
         }
     }
 
     // USER LOGIN 
     async function PostLoginUser() {
         try {
+            setLoadingAuth(true)
             const res = await fetch('/api/login', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -127,7 +134,7 @@ const SplashOnboarding = () => {
                 })
             })
             const data = await res.json()
-            console.log(data)
+            // console.log(data)
             if (!res.ok) {
                 alert(data.message)
                 return
@@ -145,6 +152,8 @@ const SplashOnboarding = () => {
             }
         } catch (error) {
             console.error(error)
+        } finally {
+            setLoadingAuth(false)
         }
     }
 
@@ -171,6 +180,11 @@ const SplashOnboarding = () => {
 
     return (
         <div className={`absolute flex flex-col items-center justify-between py-8 inset-0 top-0 h-screen w-full bg-white ${user ? "opacity-0 left-[-32rem]" : "opacity-100 left-0 "} `}>
+            {loadingAuth && (
+                <div className='absolute top-0 left-0 w-full h-full z-20'>
+                    <Spinner />
+                </div>
+            )}
             {/* Container slider */}
             <div className="overflow-hidden flex-1 flex items-center w-full">
                 <div className={`w-full px-8 absolute z-10 left-[50%] translate-x-[-50%] transition-all duration-200 ease-in-out ${showNotif && progressBar === 3 && !onRegister ? 'top-12 opacity-100' : "top-[-64px] opacity-0"}`}>
@@ -220,6 +234,8 @@ const SplashOnboarding = () => {
                                     {onRegister ? (
                                         <>
                                             <RegisterPage
+                                                loading={loadingAuth}
+                                                setLoading={setLoadingAuth}
                                                 username={username}
                                                 setUsername={setUsername}
                                                 email={email}

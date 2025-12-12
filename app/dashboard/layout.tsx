@@ -7,7 +7,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex flex-col mx-auto max-w-[32rem] h-screen w-full bg-white overflow-x-hidden">
 
             {/* Area konten yang bisa scroll */}
-            <div className="flex-1 overflow-y-auto pb-[88px] pt-8">
+            <div className="flex-1 overflow-y-auto pb-[88px]">
                 {children}
             </div>
 

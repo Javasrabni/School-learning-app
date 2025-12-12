@@ -1,7 +1,10 @@
 "use client"
+import Spinner from '@/components/loadSpinner/loadSpinner';
 import { ChevronDownIcon, EyeClosedIcon, EyeIcon } from 'lucide-react'
 import React, { useState, useRef, useEffect } from 'react'
 interface RegisterProps {
+    loading: boolean;
+    setLoading: (val: boolean) => void;
     username: string
     setUsername: (val: string) => void
     email: string
@@ -13,6 +16,7 @@ interface RegisterProps {
 }
 
 const RegisterPage = ({
+    loading, setLoading,
     username, setUsername,
     email, setEmail,
     grade, setGrade,
@@ -36,6 +40,7 @@ const RegisterPage = ({
 
     return (
         <div className="flex flex-col gap-4 w-full">
+            
             {/* Username */}
             <div className='flex flex-row gap-1 items-center  bg-stone-100 rounded-sm pr-4 w-full' id='UsernameRegister' ref={UsernameField}>
                 <input type="text" className="bg-stone-100 h-12 rounded-sm px-4 text-sm w-full outline-none" value={username} onChange={(e) => { setUsername(e.target.value); if (UsernameField.current) { UsernameField.current.style.outline = "none" } }} maxLength={20} placeholder={"Nama Kamu"} />
@@ -62,7 +67,7 @@ const RegisterPage = ({
                         {viewPassInput ? <EyeClosedIcon width={16} className='text-stone-400' /> : <EyeIcon width={16} className='text-stone-400' />}
                     </button>
                 </div>
-                
+
                 <label htmlFor="Password" className='text-xs text-stone-400'>"Password khusus untuk aplikasi ini, jangan pakai password email.”</label>
 
             </div>

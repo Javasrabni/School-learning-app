@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/userDataCookie";
-import { TrophyIcon } from "lucide-react";
+import { SearchIcon, SettingsIcon, TrophyIcon } from "lucide-react";
 
 type ProgressType = {
     materialTitle: string;
@@ -46,24 +46,34 @@ export default function SignedPage() {
 
     return (
         <motion.div
-            className="w-full px-6 pt-6 pb-24 space-y-6"
+            className="w-full pb-24 space-y-6"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
         >
             {/* Greeting — TAMPIL LANGSUNG (tidak perlu data API) */}
-            <div>
-
-                <h1 className="font-bold text-2xl">
-                    Halo, {user?.username || "User"}!
-                </h1>
-                <p className="text-sm text-neutral-500">Siap belajar hari ini?</p>
+            <div className="bg-[var(--accentColor)] w-full h-full flex justify-between flex-col py-8 px-6 gap-4">
+                <div>
+                    <h1 className="font-bold text-lg text-white">
+                        Halo, {user?.username || "User"}!
+                    </h1>
+                    <p className="text-sm text-gray-300">Siap belajar hari ini?</p>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                    <div className="w-full h-full flex items-center gap-4 bg-gray-100 rounded-lg px-4">
+                        <SearchIcon width={16} className="text-gray-400" />
+                        <input type="text" className="w-full h-13 outline-none border-none text-sm" placeholder="Cari materi" />
+                    </div>
+                    <div className="shrink-0 w-13 h-13 rounded-lg flex items-center justify-center bg-white">
+                        <SettingsIcon width={16} className="text-gray-400"/>
+                    </div>
+                </div>
             </div>
 
             {/* ============================
                 STATS — ADA SKELETON
             ============================ */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mx-6">
                 {progress === null ? (
                     [...Array(4)].map((_, i) => (
                         <div
@@ -84,7 +94,7 @@ export default function SignedPage() {
             {/* ============================
                 LEADERBOARD — ADA SKELETON
             ============================ */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="bg-white rounded-xl p-4 shadow-sm mx-6">
                 <h2 className="font-semibold text-lg mb-3">Leaderboard</h2>
 
                 {leaders === null ? (
@@ -124,7 +134,7 @@ export default function SignedPage() {
             {/* ============================
                 REKOMENDASI — ADA SKELETON
             ============================ */}
-            <div className="p-4 bg-white border rounded-xl shadow-sm">
+            <div className="p-4 bg-white border rounded-xl shadow-sm mx-6">
                 <h3 className="font-semibold text-lg mb-2">Rekomendasi Materi</h3>
 
                 {progress === null ? (
