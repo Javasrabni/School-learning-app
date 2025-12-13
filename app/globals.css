@@ -4,6 +4,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --accentColor: #2a01ff; 
+  /* --accentColor: #3b82f6;  */
 }
 
 ::-webkit-scrollbar{

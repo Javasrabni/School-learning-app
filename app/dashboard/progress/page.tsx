@@ -44,10 +44,15 @@ export default function ProgressPage() {
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const res = await fetch("/api/materials");
+        const res = await fetch("/api/materials", {
+           cache: "force-cache"
+        });
         const data = await res.json();
         setMaterials(data);
-      } finally {
+      } catch(error) {
+        console.error(error)
+      }
+      finally {
         setLoadingMaterials(false);
       }
     };

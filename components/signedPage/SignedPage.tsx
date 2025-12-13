@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/userDataCookie";
-import { BellIcon, ChartSplineIcon, CornerDownRightIcon, PlayIcon, SearchIcon, SettingsIcon, SigmaSquareIcon, SquareFunctionIcon, TrophyIcon } from "lucide-react";
+import { BellIcon, ChartSplineIcon, CornerDownRightIcon, PlayIcon, SearchIcon, SettingsIcon, SigmaSquareIcon, SparklesIcon, SquareFunctionIcon, TrophyIcon } from "lucide-react";
 // import Image from "next/image";
 import Link from "next/link";
 import Carousel from "../carousel/carousel";
@@ -12,12 +12,24 @@ import Image from "next/image";
 import { WaypointsIcon } from "lucide-react";
 import { fadeUp } from "@/app/dashboard/progress/page";
 import Leaderboard from "../Leaderboard";
+type Quiz = {
+    question: string;
+    options: string[];
+    correctAnswer: string;
+    explanation: string;
+};
+
+type SubTopic = {
+    title: string;
+    content: string;
+    quiz: Quiz[];
+};
 
 type Material = {
     _id: string;
     title: string;
     class: number;
-    subTopics: { title: string }[];
+    subTopics: SubTopic[];
 };
 
 type ProgressType = {
@@ -35,25 +47,13 @@ export default function SignedPage() {
 
     // Fetch data (tanpa halangi UI)
     useEffect(() => {
-        if (!user?._id) return;
-
-        fetch(`/api/progress?userId=${user._id}`)
-            .then((res) => res.json())
-            .then((data) => setProgress(data))
-            .catch(() => setProgress([]));
-
-        fetch("/api/leaderboard")
+        fetch("/api/leaderboard", {
+            cache: 'force-cache'
+        })
             .then((res) => res.json())
             .then((data) => setLeaders(data))
             .catch(() => setLeaders([]));
-    }, [user]);
-
-    const totalScore = progress?.reduce((a, b) => a + (b.score || 0), 0) ?? 0;
-    const totalRead = progress?.filter((p) => p.isRead).length ?? 0;
-    const level = user?.level ?? Math.floor(totalScore / 50) + 1;
-    const streak = user?.streak ?? Math.min(totalRead, 30);
-
-
+    }, []);
 
     const trophyColors = ['text-yellow-500', 'text-gray-500', 'text-amber-700'];
 
@@ -62,7 +62,9 @@ export default function SignedPage() {
     useEffect(() => {
         const MateriGetData = async () => {
             try {
-                const res = await fetch("/api/materials");
+                const res = await fetch("/api/materials", {
+                    cache: "force-cache"
+                });
                 const data = await res.json();
                 if (res.ok) {
                     setMateriMTK(data)
@@ -74,6 +76,14 @@ export default function SignedPage() {
         };
         MateriGetData()
     }, [])
+
+    const materiPilihan = [
+        { no: 1, title: "Fungsi", link: '' },
+        { no: 2, title: "Aljabar", link: '' },
+        { no: 3, title: "Geometri", link: '' },
+        { no: 4, title: "Bentuk Akar", link: '' },
+        { no: 5, title: "Perbandingan", link: '' },
+    ]
 
     return (
         <div className="flex flex-col gap-0">
@@ -140,7 +150,7 @@ export default function SignedPage() {
                         <Carousel images={["/Assets/carousel/kelas7_cr.png", "/Assets/carousel/kelas8_cr.png", "/Assets/carousel/kelas9_cr.png"]} />
                     </div>
 
-                    <motion.div {...fadeUp}  className="px-6 flex flex-col gap-1">
+                    <motion.div {...fadeUp} className="px-6 flex flex-col gap-1">
                         <span className="flex flex-row gap-2 items-center">
                             <SigmaSquareIcon width={16} />
                             <h1 className="text-base font-semibold font-[poppins]"> Mulai dari dasar</h1>
@@ -222,6 +232,20 @@ export default function SignedPage() {
                         <div className="flex flex-row gap-4 w-full h-full px-6">
                             {[7, 8, 9].map((cls, cidx) => {
                                 const filtered = materiMTK.filter((i) => i.class === cls)
+                                const totalSubtopics = filtered.reduce(
+                                    (t, m) => t + (m.subTopics?.length || 0),
+                                    0
+                                );
+
+                                const totalQuiz = filtered.reduce(
+                                    (t, m) =>
+                                        t +
+                                        m.subTopics.reduce(
+                                            (st, s) => st + (s.quiz?.length || 0),
+                                            0
+                                        ),
+                                    0
+                                );
                                 return (
                                     <div
                                         key={cidx}
@@ -240,24 +264,27 @@ export default function SignedPage() {
 
                                         {/* Content */}
                                         <div className="flex flex-col justify-between items-end w-full h-full top-0 right-0 relative z-10 p-4">
-                                            <div className="">
+                                            <div className="flex flex-col gap-[-4px]">
                                                 <h1 className="font-semibold text-base font-[poppins] text-white text-right">
                                                     Kelas {cls}
                                                 </h1>
 
-                                                {/* <p className="text-xs text-white/80 text-right font-bold font-[urbanist] mt-1">
-                                                    Silabus & Materi Terstruktur
-                                                </p> */}
+                                                <p className="text-xs text-white/80 text-right font-bold font-[urbanist]">
+                                                    {filtered.length} Materi · {totalSubtopics} Submateri
+                                                </p>
                                             </div>
 
-                                            <Link
-                                                href="/"
-                                                className="w-fit px-4 py-1 bg-[var(--accentColor)] rounded-full shadow-md hover:bg-blue-600 transition"
-                                            >
-                                                <p className="text-white font-semibold text-xs font-[urbanist]">
-                                                    Mulai Belajar
-                                                </p>
-                                            </Link>
+                                            <div className="w-full flex flex-row justify-between items-center">
+                                                <p className="text-xs text-white/80 text-right font-bold font-[urbanist]">{totalQuiz} Soal</p>
+                                                <Link
+                                                    href="/"
+                                                    className="w-fit px-4 py-1 bg-[var(--accentColor)] rounded-full shadow-md hover:bg-blue-600 transition"
+                                                >
+                                                    <p className="text-white font-semibold text-xs font-[urbanist]">
+                                                        Mulai Belajar
+                                                    </p>
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -270,13 +297,38 @@ export default function SignedPage() {
 
                 </div>
 
+                <div className="w-full h-full flex flex-col gap-6 p-6 bg-white">
+                    <motion.div {...fadeUp} className="flex flex-col gap-1">
+                        <span className="flex flex-row gap-2 items-center">
+                            <SparklesIcon width={16} />
+                            <h1 className="text-base font-semibold font-[poppins]">Materi Pilihan</h1>
+                        </span>
+                        <p className="text-xs text-stone-500">
+                            Materi yang seru untuk kamu pelajari!
+                        </p>
+                    </motion.div>
+                    <div className="flex flex-row gap-2 flex-wrap">
+                        {materiPilihan.map((i) =>
+                            <Link key={i.no} href={i.link} className="w-fit bg-stone-100 px-6 py-2 rounded-md outline-1 outline-blue-200">
+                                <h1 className="text-xs font-semibold font-[urbanist]">{i.title}</h1>
+                            </Link>
+                        )}
+                    </div>
+                </div>
+
 
                 {/* LEADERBOARD — ADA SKELETON */}
                 <div className="bg-white p-6 h-full w-full space-y-6">
-                    <span className="flex space-x-2 items-center">
-                        <TrophyIcon width={16} />
-                        <h2 className="font-semibold text-sm">Leaderboard</h2>
-                    </span>
+                    <motion.div {...fadeUp} className="flex flex-col gap-1 pb-4">
+                        <span className="flex flex-row gap-2 items-center">
+                            <TrophyIcon width={16} />
+                            <h1 className="text-base font-semibold font-[poppins]">Leaderboard</h1>
+                        </span>
+                        <p className="text-xs text-stone-500">
+                            *Dapatkan point dengan mengerjakan soal pada materi pembelajaran.
+                        </p>
+                    </motion.div>
+
 
                     {leaders === null ? (
                         <div className="flex flex-col gap-2">
