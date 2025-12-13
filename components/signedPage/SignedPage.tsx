@@ -170,7 +170,7 @@ export default function SignedPage() {
                                                     animationDuration: `${arr.length * 0.5}s`,
                                                 }}
                                             />
-                                            <span className="relative z-10 w-2 h-2 bg-blue-500 rounded-full" />
+                                            <span className="relative z-10 w-2 h-2 bg-[var(--accentColor)] rounded-full" />
                                         </span>
 
                                         {/* Konten */}
@@ -183,7 +183,7 @@ export default function SignedPage() {
                                                 {i.subTopics.length} Materi
                                             </p>
                                         </div>
-                                        <Link href={'/'} className="text-xs font-[urbanist] bg-blue-500 px-4 py-[2px] rounded-full text-white font-semibold mt-2">
+                                        <Link href={'/'} className="text-xs font-[urbanist] bg-[var(--accentColor)] px-4 py-[2px] rounded-full text-white font-semibold mt-2">
                                             <span className="flex items-center space-x-2 ">
                                                 <CornerDownRightIcon width={12} />
                                                 <p>Buka</p>
@@ -201,9 +201,9 @@ export default function SignedPage() {
                 </div>
 
                 {/* LIST MATERI KELAS 7-9 (SECTION) */}
-                <div className="w-full px-6 space-y-6 bg-white py-6">
+                <div className="w-full space-y-6 bg-white py-6">
                     {/* Title */}
-                    <motion.div {...fadeUp} className="flex flex-col gap-1">
+                    <motion.div {...fadeUp} className="flex flex-col gap-1 px-6">
                         <span className="flex flex-row gap-2 items-center">
                             <WaypointsIcon width={16} />
                             <h1 className="text-base font-semibold font-[poppins]">Materi Belajar</h1>
@@ -219,20 +219,20 @@ export default function SignedPage() {
 
                     {/* LIST KELAS */}
                     <div className="w-full h-full overflow-x-auto">
-                        <div className="flex flex-row gap-4 w-full h-full">
+                        <div className="flex flex-row gap-4 w-full h-full px-6">
                             {[7, 8, 9].map((cls, cidx) => {
                                 const filtered = materiMTK.filter((i) => i.class === cls)
                                 return (
                                     <div
                                         key={cidx}
-                                        className="w-45.5 h-58.5 bg-stone-100 rounded-xl shrink-0 relative overflow-hidden"
+                                        className="w-45.5 h-58.5 bg-stone-100 rounded-xl shrink-0 relative overflow-hidden "
                                     >
                                         {/* Background Image */}
                                         <Image
-                                            src="/Assets/card/card2.png"
+                                            src={cls === 7 ? "/Assets/card/card_02.png" : cls === 8 ? "/Assets/card/card03.png" : "/Assets/card/card04.png"}
                                             alt=""
                                             fill
-                                            className="object-cover rounded-xl z-8"
+                                            className="object-cover rounded-xl z-8 scale-[100%]"
                                         />
 
                                         {/* Overlay supaya teks kebaca */}
@@ -240,19 +240,19 @@ export default function SignedPage() {
 
                                         {/* Content */}
                                         <div className="flex flex-col justify-between items-end w-full h-full top-0 right-0 relative z-10 p-4">
-                                            <div className="items-end w-full flex flex-col">
-                                                <h1 className="font-semibold text-base font-[poppins] text-white">
+                                            <div className="">
+                                                <h1 className="font-semibold text-base font-[poppins] text-white text-right">
                                                     Kelas {cls}
                                                 </h1>
 
-                                                <p className="text-xs text-white/80 text-right font-bold font-[urbanist] mt-1">
+                                                {/* <p className="text-xs text-white/80 text-right font-bold font-[urbanist] mt-1">
                                                     Silabus & Materi Terstruktur
-                                                </p>
+                                                </p> */}
                                             </div>
 
                                             <Link
                                                 href="/"
-                                                className="w-fit px-4 py-1 bg-blue-500 rounded-full shadow-md hover:bg-blue-600 transition"
+                                                className="w-fit px-4 py-1 bg-[var(--accentColor)] rounded-full shadow-md hover:bg-blue-600 transition"
                                             >
                                                 <p className="text-white font-semibold text-xs font-[urbanist]">
                                                     Mulai Belajar
@@ -264,7 +264,7 @@ export default function SignedPage() {
 
                                 )
                             })}
-
+                            <div className="w-2 shrink-0" />
                         </div>
                     </div>
 
@@ -292,7 +292,7 @@ export default function SignedPage() {
                                 {[1, 0, 2].map((cls) => {
                                     const render = leaders[cls]
                                     return (
-                                        <div className="flex flex-col w-full space-y-4 items-center justify-center">
+                                        <div key={cls} className="flex flex-col w-full space-y-4 items-center justify-center">
                                             <div className="flex items-center justify-center flex-col gap-2">
                                                 <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shrink-0">
                                                     <img
