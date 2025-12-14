@@ -48,7 +48,7 @@ export default function QuizQuestion({
   return (
     <div className="space-y-4">
       {/* Question */}
-      <p className="text-lg font-semibold text-gray-900">{question}</p>
+      <p className="text-sm font-semibold text-gray-900 font-[poppins ]">{question}</p>
 
       {/* Options */}
       <div className="space-y-3">
@@ -85,13 +85,13 @@ export default function QuizQuestion({
               onClick={() => handleAnswer(opt)}
               disabled={locked}
               className={`
-                w-full p-4 rounded-lg border-2 text-left transition-all
+                w-full px-4 py-2 rounded-lg border-2 text-left transition-all
                 flex items-center justify-between gap-3
                 ${buttonStyle}
                 ${locked ? 'cursor-default' : ''}
               `}
             >
-              <span className="flex-1 font-medium">{opt}</span>
+              <span className="flex-1 text-xs font-medium">{opt}</span>
               
               {/* Show icon only after submission (when locked) */}
               {locked && icon}
@@ -110,7 +110,7 @@ export default function QuizQuestion({
           }`}
         >
           <p
-            className={`font-semibold ${
+            className={`font-semibold text-xs ${
               feedback === "Benar!" ? "text-green-900" : "text-red-900"
             }`}
           >
@@ -127,7 +127,7 @@ export default function QuizQuestion({
         <div className="flex">
           <button
             onClick={handleRetry}
-            className="px-6 py-2.5 rounded-lg text-sm font-medium bg-gray-600 text-white hover:bg-gray-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+            className="text-xs px-6 py-2.5 rounded-lg text-sm font-medium bg-gray-600 text-white hover:bg-gray-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2"
           >
             <RotateCcw className="w-4 h-4" />
             Ulangi Jawaban

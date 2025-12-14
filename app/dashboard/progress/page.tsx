@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/userDataCookie";
 import { motion } from "framer-motion";
-import { BrainIcon, WaypointsIcon } from "lucide-react";
+import { ArrowRightIcon, BrainIcon, WaypointsIcon } from "lucide-react";
 
 export type Material = {
   _id: string;
@@ -136,9 +136,9 @@ export default function ProgressPage({ onData, index }: { onData: Material[], in
                       <div key={m._id} className="bg-stone-100 rounded-xl p-4  cursor-pointer" onClick={() => router.push(`/dashboard/material/${m._id}`)}
                       >
                         <div className="flex justify-between items-start">
-                          <div className="flex flex-col">
-                            <h1 className="font-semibold text-sm font-[poppins]">{m.title}</h1>
-                            <p className="text-xs text-gray-500 font-[urbanist]">
+                          <div className="flex flex-col gap-[2px]">
+                            <h1 className="font-semibold text-base font-[poppins]">{m.title}</h1>
+                            <p className="text-xs text-gray-500 font-[poppins]">
                               {completed}/{m.subTopics.length} Submateri selesai
                             </p>
                           </div>
@@ -153,8 +153,8 @@ export default function ProgressPage({ onData, index }: { onData: Material[], in
 
 
 
-                        <div className="mt-0 bg-neutral-100 rounded-lg p-3 max-h-32 overflow-y-auto">
-                          <ul className="text-xs space-y-1 font-[urbanist]">
+                        <div className="flex flex-row justify-between items-end mt-0 bg-neutral-100 rounded-lg pt-2 px-2 max-h-32 overflow-y-auto">
+                          <ul className="text-xs space-y-1 font-[poppins]">
                             {m.subTopics.map((s, idx) => {
                               const read = progress.some(
                                 (p) =>
@@ -164,13 +164,14 @@ export default function ProgressPage({ onData, index }: { onData: Material[], in
                               );
 
                               return (
-                                <li key={idx} className={`flex  items-center gap-2 ${read ? "text-green-500 font-semibold" : ""}`}>
+                                <li key={idx} className={`flex  items-center gap-2 ${read ? "text-green-500 font-medium" : "text-gray-500"}`}>
                                   <span className={`w-1 h-1 rounded-full ${read ? "bg-green-500" : "bg-gray-400"}`} />
                                   {s.title}
                                 </li>
                               );
                             })}
                           </ul>
+                          <ArrowRightIcon width={16} className="text-stone-400" />
                         </div>
                       </div>
                     );

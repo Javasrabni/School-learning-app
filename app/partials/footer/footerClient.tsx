@@ -14,17 +14,16 @@ const FooterClient = () => {
 
     const data = [
         { no: 1, label: "Home", path: "/dashboard", icon: <HomeIcon width={18} /> },
-        { no: 2, label: "Belajar", path: "/dashboard/progress", icon: <FlameIcon width={18} /> },
+        // { no: 2, label: "Belajar", path: "/dashboard/progress", icon: <FlameIcon width={18} /> },
         { no: 3, label: "Profil", path: "/dashboard/profil", icon: <User2Icon width={18} /> },
     ]
 
     useEffect(() => {
         if (pathname === data[0].path) {
             setActiveTab(data[0].no)
-        } else if (pathname === data[1].path) {
+        }
+        else if (pathname === data[1].path) {
             setActiveTab(data[1].no)
-        } else if (pathname === data[2].path) {
-            setActiveTab(data[2].no)
         }
     }, [pathname])
     useEffect(() => {

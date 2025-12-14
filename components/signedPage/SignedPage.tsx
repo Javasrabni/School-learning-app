@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/userDataCookie";
-import { BellIcon, ChartSplineIcon, CornerDownRightIcon, PlayIcon, RefreshCwIcon, SearchIcon, SettingsIcon, SigmaSquareIcon, SparklesIcon, SquareFunctionIcon, TrophyIcon } from "lucide-react";
+import { BellIcon, ChartSplineIcon, CornerDownRightIcon, LogOutIcon, PlayIcon, RefreshCwIcon, SearchIcon, SettingsIcon, SigmaSquareIcon, SparklesIcon, SquareFunctionIcon, TrophyIcon } from "lucide-react";
 // import Image from "next/image";
 import Link from "next/link";
 import Carousel from "../carousel/carousel";
@@ -80,11 +80,11 @@ export default function SignedPage() {
     }, [])
 
     const materiPilihan = [
-        { no: 1, title: "Fungsi", link: '' },
-        { no: 2, title: "Aljabar", link: '' },
-        { no: 3, title: "Geometri", link: '' },
-        { no: 4, title: "Bentuk Akar", link: '' },
-        { no: 5, title: "Perbandingan", link: '' },
+        { no: 1, title: "Fungsi", link: '/dashboard/material/6938bb9be7f448786e62797e' },
+        { no: 2, title: "Aljabar", link: '/dashboard/material/6938bbf4699f1856aaadd80b' },
+        { no: 3, title: "Geometri", link: '/dashboard/material/6938bc5377a90362e5b1470f' },
+        { no: 4, title: "Bentuk Akar", link: '/dashboard/material/6938bb9be7f448786e627970' },
+        { no: 5, title: "Perbandingan", link: '/dashboard/material/6938bbf4699f1856aaadd81f' },
     ]
 
     // REFRESH LEADERBOARD
@@ -118,6 +118,8 @@ export default function SignedPage() {
 
     }
 
+    const [onSetting, setOnSetting] = useState(false)
+
     return (
         <div className="flex flex-col gap-0">
 
@@ -127,47 +129,47 @@ export default function SignedPage() {
             <div className="bg-[var(--accentColor)] w-full h-full flex justify-between flex-col pt-8 pb-16 px-6 gap-6">
 
                 {/* OPEN LIST MATER */}
-               <div
-  className={`
+                <div
+                    className={`
     fixed inset-0
     bg-black/50
     transition-opacity duration-300 ease-in-out
     ${openListMateri ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
     z-120
   `}
->
-  <div
-    className={`
+                >
+                    {/* <div
+                        className={`
       relative w-full h-full
       transition-transform duration-300 ease-out
       ${openListMateri ? 'translate-y-0' : 'translate-y-full'}
     `}
-  >
-    <div className="w-full h-72 relative">
-      <div className="relative z-10 h-[80%] text-white p-6 flex items-center justify-center">
-        <h1 className="text-lg font-bold font-[urbanist]">
-          Kelas {getListMateriData[0]?.class}
-        </h1>
-      </div>
+                    >
+                        <div className="w-full h-72 relative">
+                            <div className="relative z-10 h-[80%] text-white p-6 flex items-center justify-center">
+                                <h1 className="text-lg font-bold font-[urbanist]">
+                                    Kelas {getListMateriData[0]?.class}
+                                </h1>
+                            </div>
 
-      <Image
-        src={
-          getListMateriData[0]?.class === 7
-            ? '/Assets/card/card_02.png'
-            : getListMateriData[0]?.class === 8
-            ? '/Assets/card/card03.png'
-            : '/Assets/card/card04.png'
-        }
-        alt=""
-        fill
-        className="select-none object-cover blur-[3px] scale-[105%] brightness-40"
-      />
-    </div>
-  </div>
-</div>
+                            <Image
+                                src={
+                                    getListMateriData[0]?.class === 7
+                                        ? '/Assets/card/card_02.png'
+                                        : getListMateriData[0]?.class === 8
+                                            ? '/Assets/card/card03.png'
+                                            : '/Assets/card/card04.png'
+                                }
+                                alt=""
+                                fill
+                                className="select-none object-cover blur-[3px] scale-[105%] brightness-40"
+                            />
+                        </div>
+                    </div> */}
+                </div>
 
 
-                <OpenListMateri onOpen={openListMateri} setOnOpen={setOpenListMateri} onData={getListMateriData} indexMateri={getIndexMateri}/>
+                <OpenListMateri onOpen={openListMateri} setOnOpen={setOpenListMateri} onData={getListMateriData} indexMateri={getIndexMateri} />
 
                 {/* GREETING N PHOTO PROFILE */}
                 <div className="w-full h-full flex flex-row justify-between items-center gap-0">
@@ -179,7 +181,7 @@ export default function SignedPage() {
                     </div>
                     <div className="w-fit h-full flex flex-row gap-4 items-center shrink-0">
                         {/* <p className="text-xs text-gray-300">{user?.grade}</p> */}
-                        <BellIcon width={18} className="text-white" />
+                        {/* <BellIcon width={18} className="text-white" /> */}
                         <Link href={'/dashboard/profil'} className="w-8 h-8 outline-0 outline-gray-400 rounded-full">
                             <img src={user?.avatar || '/Assets/onPage/defaultProfile.png'} alt="" width={'100%'} className={` rounded-full object-cover ${!user?.avatar && 'scale-[135%]'}`} />
                         </Link>
@@ -187,14 +189,20 @@ export default function SignedPage() {
                 </div>
 
                 {/* SEARCH INPUT N SETTING */}
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 relative">
                     <div className="w-full h-full flex items-center gap-4 bg-white rounded-lg px-4">
                         <SearchIcon width={16} className="text-gray-500" />
                         <input type="text" className="w-full h-10 outline-none border-none text-xs" placeholder="Cari materi" />
                     </div>
-                    <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-white">
+                    <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-white" onClick={()=> setOnSetting((prev)=> !prev)}>
                         <SettingsIcon width={16} className="text-gray-500" />
                     </div>
+                    {onSetting && (
+                        <div className="absolute z-200 bottom-[-90%] outline-1 outline-blue-200 right-0 bg-white flex items-center justify-between gap-2 px-4 py-[2px] rounded-md">
+                            <LogOutIcon width={16} color="tomato" />
+                            <p className="text-xs">Logout</p>
+                        </div>
+                    )}
                 </div>
 
             </div>
@@ -272,7 +280,7 @@ export default function SignedPage() {
                                                 {i.subTopics.length} Materi
                                             </p>
                                         </div>
-                                        <Link href={'/'} className="text-xs font-[urbanist] bg-[var(--accentColor)] px-4 py-[2px] rounded-full text-white font-semibold mt-2">
+                                        <Link href={`/dashboard/material/${i._id}`} className="text-xs font-[urbanist] bg-[var(--accentColor)] px-4 py-[2px] rounded-full text-white font-semibold mt-2">
                                             <span className="flex items-center space-x-2 ">
                                                 <CornerDownRightIcon width={12} />
                                                 <p>Buka</p>

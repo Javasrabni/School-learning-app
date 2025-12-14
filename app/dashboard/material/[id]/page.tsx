@@ -4,17 +4,16 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/userDataCookie";
-import { 
-  ArrowLeftIcon, 
-  CheckCircleIcon, 
-  BookOpenIcon,
-  MessageSquareIcon,
-  ClockIcon
+import {
+  ArrowLeft,
+  CheckCircle,
+  BookOpen,
+  MessageSquare,
+  Clock
 } from "lucide-react";
 import QuizQuestion from "@/components/QuizQuestion";
 import CommentSection from "@/components/CommentSection";
 import ReactMarkdown from "react-markdown";
-
 
 type SubTopic = {
   title: string;
@@ -55,28 +54,31 @@ export default function MaterialPage() {
   const [material, setMaterial] = useState<MaterialDetailType | null>(null);
   const [currentTab, setCurrentTab] = useState<number | "comments">(0);
   const [progress, setProgress] = useState<ProgressType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(true);
 
-  // Fetch Material
+  // Fetch Material (dengan cache, langsung render)
   useEffect(() => {
     const fetchMaterial = async () => {
       try {
-        const res = await fetch("/api/materials");
+        const res = await fetch("/api/materials", {
+          cache: "force-cache"
+        });
         const data: MaterialDetailType[] = await res.json();
         const m = data.find((mat) => mat._id === id) || null;
         setMaterial(m);
       } catch (error) {
         console.error("Error fetching material:", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchMaterial();
   }, [id]);
 
-  // Fetch Progress
+  // Fetch Progress (tanpa cache, ada skeleton)
   useEffect(() => {
-    if (!user?._id) return;
+    if (!user?._id) {
+      setLoadingProgress(false);
+      return;
+    }
 
     const fetchProgress = async () => {
       try {
@@ -86,6 +88,8 @@ export default function MaterialPage() {
       } catch (error) {
         console.error("Error fetching progress:", error);
         setProgress([]);
+      } finally {
+        setLoadingProgress(false);
       }
     };
     fetchProgress();
@@ -135,32 +139,16 @@ export default function MaterialPage() {
     }
   };
 
-  // Loading Skeleton
-  if (loading) {
+  // Material tidak ditemukan
+  if (material === null && !loadingProgress) {
     return (
-      <div className="w-full min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
-          <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
-          <div className="h-8 w-64 bg-gray-200 rounded animate-pulse" />
-          <div className="flex gap-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-10 w-32 bg-gray-200 rounded-xl animate-pulse" />
-            ))}
-          </div>
-          <div className="h-64 bg-gray-200 rounded-xl animate-pulse" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!material) {
-    return (
-      <div className="w-full min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500 mb-4">Materi tidak ditemukan</p>
+      <div className="w-full min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <BookOpen className="w-16 h-16 text-gray-400 mx-auto" />
+          <p className="text-gray-500 font-[poppins]">Materi tidak ditemukan</p>
           <button
             onClick={() => router.back()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-2 bg-[var(--accentColor)] text-white rounded-lg hover:bg-blue-700 transition font-[urbanist] font-semibold"
           >
             Kembali
           </button>
@@ -169,145 +157,187 @@ export default function MaterialPage() {
     );
   }
 
-  const subTopic = typeof currentTab === "number" ? material.subTopics[currentTab] : null;
+  const subTopic = typeof currentTab === "number" && material ? material.subTopics[currentTab] : null;
 
-  const totalSubTopics = material.subTopics.length;
-  const completedSubTopics = material.subTopics.filter((_, idx) =>
+  const totalSubTopics = material?.subTopics.length || 0;
+  const completedSubTopics = material ? material.subTopics.filter((_, idx) =>
     progress.some(
       (p) =>
         p.materialTitle === material.title &&
         p.subTopicIndex === idx &&
         p.isRead
     )
-  ).length;
+  ).length : 0;
 
-  const progressPercentage = Math.round((completedSubTopics / totalSubTopics) * 100);
+  const progressPercentage = totalSubTopics > 0 ? Math.round((completedSubTopics / totalSubTopics) * 100) : 0;
 
   return (
-    <motion.div 
-      className="w-full min-h-screen "
+    <motion.div
+      className="w-full min-h-screen bg-stone-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="max-w-4xl mx-auto px-6 pt-6 pb-24 space-y-6">
-        
+      <div className="max-w-4xl mx-auto pb-24 space-y-2">
+
         {/* HEADER SECTION */}
         <motion.div {...fadeUp}>
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors mb-4"
+            className="fixed bottom-12 right-2 flex items-center gap-2 px-2 py-1 text-gray-700 outline-1 outline-blue-200 hover:text-gray-900 transition-colors mb-4 text-xs font-[poppins] bg-stone-100 rounded-md"
           >
-            <ArrowLeftIcon className="w-5 h-5" />
-            <span className="font-medium">Kembali</span>
+            <ArrowLeft width={16} />
+            <span className="font-semibold font-[urbanist]">Kembali</span>
           </button>
 
           {/* Title & Progress Card */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  {material.title}
-                </h1>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span className="flex items-center gap-1">
-                    <BookOpenIcon className="w-4 h-4" />
-                    Kelas {material.class}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <ClockIcon className="w-4 h-4" />
-                    {totalSubTopics} Sub-topik
-                  </span>
+          <div className="bg-white pt-8 px-6 pb-6  flex flex-col gap-4">
+            <div className="flex items-start justify-between mb-1">
+              <div className="flex flex-col gap-[2px]">
+                {material ? (
+                  <>
+                    <h1 className="text-base font-bold text-gray-900 font-[poppins]">
+                      {material.title}
+                    </h1>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 font-[urbanist]">
+                      <span className="flex items-center gap-2 text-xs font-[poppins]">
+                        <BookOpen width={12} />
+                        Kelas {material.class}
+                      </span>
+                      <span className="flex items-center gap-2 text-xs font-[poppins]">
+                        <Clock width={12} />
+                        {totalSubTopics} Submateri
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="h-8 w-64 bg-gray-200 rounded animate-pulse mb-2" />
+                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse" />
+                  </>
+                )}
+              </div>
+
+              {/* Progress Badge - Skeleton saat loading progress */}
+              {loadingProgress ? (
+                <div className="bg-gray-100 rounded-lg px-4 py-2 min-w-[80px]">
+                  <div className="h-8 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1" />
+                  <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
                 </div>
-              </div>
-              
-              {/* Progress Badge */}
-              <div className="bg-blue-50 rounded-lg px-4 py-2 text-center min-w-[80px]">
-                <p className="text-2xl font-bold text-blue-600">{progressPercentage}%</p>
-                <p className="text-xs text-gray-600">Selesai</p>
-              </div>
+              ) : (
+                <div className="bg-blue-50 rounded-lg px-4 py-1 text-center min-w-[80px]">
+                  <p className="text-xl font-bold text-blue-600 font-[poppins]">{progressPercentage}%</p>
+                  {/* <p className="text-xs text-gray-600 font-[urbanist]">Selesai</p> */}
+                </div>
+              )}
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-blue-600"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
+            <div>
+
+              {loadingProgress ? (
+                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden animate-pulse" />
+              ) : (
+                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-blue-600"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercentage}%` }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                  />
+                </div>
+              )}
+
+              {loadingProgress ? (
+                <div className="h-3 w-48 bg-gray-200 rounded animate-pulse mt-2" />
+              ) : (
+                <p className="text-xs text-gray-500 mt-2 font-[urbanist] font-semibold">
+                  {completedSubTopics} dari {totalSubTopics} sub-topik selesai
+                </p>
+              )}
             </div>
-            <p className="text-xs text-gray-500 mt-2">
-              {completedSubTopics} dari {totalSubTopics} sub-topik selesai
-            </p>
+
           </div>
         </motion.div>
 
         {/* TAB NAVIGATION */}
-        <motion.div 
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"
-          {...fadeUp}
-        >
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {material.subTopics.map((s, idx) => {
-              const isRead = progress.some(
-                (p) =>
-                  p.materialTitle === material.title &&
-                  p.subTopicIndex === idx &&
-                  p.isRead
-              );
-
-              const isActive = currentTab === idx;
-
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentTab(idx)}
-                  className={`
-                    relative px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all
-                    ${isActive
-                      ? "bg-blue-600 text-white shadow-md"
-                      : isRead
-                      ? "bg-green-50 text-green-700 border border-green-200"
-                      : "bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"
-                    }
-                  `}
-                >
-                  <span className="flex items-center gap-2">
-                    {isRead && !isActive && (
-                      <CheckCircleIcon className="w-4 h-4" />
-                    )}
-                    {s.title}
-                  </span>
-                </button>
-              );
-            })}
-
-            <button
-              onClick={() => setCurrentTab("comments")}
-              className={`
-                px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2
-                ${
-                  currentTab === "comments"
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"
-                }
-              `}
-            >
-              <MessageSquareIcon className="w-4 h-4" />
-              Komentar
-            </button>
-          </div>
-        </motion.div>
-
-        {/* CONTENT SECTION */}
-        {currentTab === "comments" ? (
-          <motion.div 
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+        {material && (
+          <motion.div
+            className="bg-white p-4 "
             {...fadeUp}
           >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <MessageSquareIcon className="w-5 h-5 text-blue-600" />
+            <div className="flex flex-col gap-2 pb-2 scrollbar-hide">
+              {material.subTopics.map((s, idx) => {
+                const isRead = progress.some(
+                  (p) =>
+                    p.materialTitle === material.title &&
+                    p.subTopicIndex === idx &&
+                    p.isRead
+                );
+
+                const isActive = currentTab === idx;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentTab(idx)}
+                    className={`
+                      relative px-4 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap ransition-all font-[poppins]
+                      ${isActive
+                        ? "bg-[var(--accentColor)] text-white shadow-md"
+                        : isRead
+                          ? "bg-green-50 text-green-700 border border-green-200"
+                          : "bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"
+                      }
+                    `}
+                  >
+                    <span className="flex items-center gap-2">
+                      {isRead && !isActive && (
+                        <CheckCircle width={12} />
+                      )}
+                      {s.title}
+                    </span>
+                  </button>
+                );
+              })}
+
+              <button
+                onClick={() => setCurrentTab("comments")}
+                className={`
+                  px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 font-[urbanist]
+                  ${currentTab === "comments"
+                    ? "bg-[var(--accentColor)] text-white shadow-md"
+                    : "bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"
+                  }
+                `}
+              >
+                <MessageSquare width={16} />
+                Komentar
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* CONTENT SECTION */}
+        {!material ? (
+          // Skeleton untuk content saat material belum load
+          <div className="space-y-4">
+            <div className="bg-white p-6 ">
+              <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-4" />
+              <div className="space-y-3">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+              </div>
+            </div>
+          </div>
+        ) : currentTab === "comments" ? (
+          <motion.div
+            className="bg-white p-6 "
+            {...fadeUp}
+          >
+            <h2 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2 font-[poppins]">
+              <MessageSquare width={16} className=" text-blue-600" />
               Diskusi & Komentar
             </h2>
             <CommentSection materialTitle={material.title} />
@@ -315,85 +345,82 @@ export default function MaterialPage() {
         ) : (
           <>
             {/* CONTENT CARD */}
-            <motion.div 
-              className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+            <motion.div
+              className="bg-white p-6 "
               {...fadeUp}
             >
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+              <h2 className="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200 font-[poppins]">
                 {subTopic?.title}
               </h2>
               <div className="prose prose-gray max-w-none">
-                <p className="leading-relaxed text-gray-700 whitespace-pre-line prose prose-gray max-w-none">
+                <div className="leading-relaxed text-gray-700 whitespace-pre-line prose prose-gray max-w-none font-[inter] text-base">
                   <ReactMarkdown>{subTopic?.content || ""}</ReactMarkdown>
-                </p>
+                </div>
               </div>
             </motion.div>
 
             {/* QUIZ SECTION */}
             {subTopic?.quiz?.length ? (
               <motion.div className="space-y-4" {...fadeUp}>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <CheckCircleIcon className="w-5 h-5 text-blue-600" />
+                <div className="flex flex-col gap-6 px-6 text-gray-700 py-6 bg-white">
+                  <div className="flex flex-row gap-4 items-center border-b-1 border-gray-200 pb-4">
+                    {/* <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"> */}
+                      <CheckCircle width={16} />
+                    {/* </div> */}
+                    <h3 className="text-sm font-semibold font-[poppins]">
+                      Latihan Soal ({subTopic.quiz.length} Pertanyaan)
+                    </h3>
                   </div>
-                  <h3 className="text-lg font-semibold">
-                    Latihan Soal ({subTopic.quiz.length} Pertanyaan)
-                  </h3>
-                </div>
 
-                {subTopic.quiz.map((q, idx) => {
-                  const answered = progress.some(
-                    (p) =>
-                      p.materialTitle === material.title &&
-                      p.subTopicIndex === currentTab &&
-                      p.isRead
-                  );
+                  {subTopic.quiz.map((q, idx) => {
+                    const answered = progress.some(
+                      (p) =>
+                        p.materialTitle === material.title &&
+                        p.subTopicIndex === currentTab &&
+                        p.isRead
+                    );
 
-                  return (
-                    <motion.div
-                      key={idx}
-                      className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <div className="mb-4">
-                        <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
-                          Soal {idx + 1}
-                        </span>
-                      </div>
-                      
-                      <QuizQuestion
-                        question={q.question}
-                        options={q.options}
-                        correctAnswer={q.correctAnswer}
-                        onScoreUpdate={handleQuizScore}
-                      />
-
-                      {answered && (
-                        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-700">
-                            ✓ Kamu sudah mengerjakan latihan ini. Gunakan tombol{" "}
-                            <span className="font-semibold">Ulangi Jawaban</span> untuk mencoba lagi.
-                          </p>
+                    return (
+                      <div className="flex flex-col gap-4">
+                        <div className="text-center">
+                          <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium font-[urbanist] ">
+                            Soal {idx + 1}
+                          </span>
                         </div>
-                      )}
-                    </motion.div>
-                  );
-                })}
+
+                        <QuizQuestion
+                          question={q.question}
+                          options={q.options}
+                          correctAnswer={q.correctAnswer}
+                          onScoreUpdate={handleQuizScore}
+                        />
+
+                        {answered && (
+                          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <p className="text-xs text-green-700  font-semibold font-[urbanist]">
+                              ✓ Kamu sudah mengerjakan latihan ini. Gunakan tombol{" "}
+                              <span className="font-semibold">Ulangi Jawaban</span> untuk mencoba lagi.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                    );
+                  })}
+                </div>
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200"
                 {...fadeUp}
               >
                 <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
-                  <BookOpenIcon className="w-8 h-8 text-gray-400" />
+                  <BookOpen className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-gray-600">
+                <p className="text-gray-600 font-[poppins]">
                   Tidak ada kuis pada sub-topik ini
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 mt-1 font-[inter]">
                   Lanjut ke sub-topik berikutnya untuk latihan soal
                 </p>
               </motion.div>

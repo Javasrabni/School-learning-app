@@ -24,18 +24,18 @@ export default function QuizHistory({ userId }: { userId?: string }) {
     })();
   }, [userId]);
 
-  if (loading) return <div className="text-sm text-gray-500">Loading...</div>;
-  if (!history.length) return <div className="text-sm text-gray-500">Belum ada riwayat quiz.</div>;
+  if (loading) return <div className="text-xs text-gray-500">Loading...</div>;
+  if (!history.length) return <div className="text-xs text-gray-500">Belum ada riwayat quiz.</div>;
 
   return (
     <div className="space-y-4 max-h-56 overflow-y-auto">
       {history.map((h, i) => (
-        <div key={i} className="p-2 rounded bg-gray-50 flex items-center justify-between">
+        <div key={i} className="p-2 rounded-md bg-stone-100 flex items-center justify-between">
           <div>
-            <div className="text-sm font-medium pb-1">{h.materialTitle} — Bagian {h.subTopicIndex + 1}</div>
-            <div className="font-[inter] text-xs text-gray-500">{h.createdAt ? new Date(h.createdAt).toLocaleString() : "-"}</div>
+            <div className="text-xs font-medium pb-1">{h.materialTitle} — Bagian {h.subTopicIndex + 1}</div>
+            <div className="font-[urbanist] font-medium text-xs text-gray-500">{h.createdAt ? new Date(h.createdAt).toLocaleString() : "-"}</div>
           </div>
-          <div className={`font-[inter] px-2 py-1 rounded text-xs ${h.score >= 10 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{h.score} points</div>
+          <div className={`font-[urbanist] font-bold px-2 py-1 rounded text-xs ${h.score >= 10 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{h.score} poin</div>
         </div>
       ))}
     </div>

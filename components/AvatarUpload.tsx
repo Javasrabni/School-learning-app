@@ -35,9 +35,9 @@ export default function AvatarUpload({ onUploaded }: { onUploaded?: () => void }
   };
 
   return (
-    <label className="inline-flex items-center gap-2 cursor-pointer px-3 py-2 bg-gray-100 rounded">
+    <label className="inline-flex items-center gap-2 cursor-pointer px-3 py-2 bg-gray-100 rounded-md">
       <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
-      <span className="text-xs">{loading ? "Uploading..." : "Ubah Avatar"}</span>
+      <span className="text-xs font-[urbanist] font-semibold">{loading ? "Uploading..." : "Ubah Avatar"}</span>
     </label>
   );
 }

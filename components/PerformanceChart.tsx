@@ -17,15 +17,15 @@ export default function PerformanceChart({ data }: { data: ProgressType[] }) {
   return (
     <div style={{ width: "100%", height: 220 }}>
       {series.length === 0 ? (
-        <div className="text-sm text-gray-500">Belum ada aktivitas</div>
+        <div className="text-xs px-6 text-gray-500">Belum ada aktivitas</div>
       ) : (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" >
           <LineChart data={series}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-            <YAxis />
+            <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+            <YAxis tick={{fontSize: 10}}/>
             <Tooltip />
-            <Line type="monotone" dataKey="score" stroke="#2563eb" strokeWidth={2} />
+            <Line type="monotone" dataKey="score" stroke="var(--accentColor)" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       )}

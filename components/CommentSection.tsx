@@ -66,13 +66,12 @@ export default function CommentSection({ materialTitle }: { materialTitle: strin
 
   return (
     <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-2">Komentar</h3>
       <div className="space-y-3">
         {comments.map((c) => (
-          <div key={c._id} className="p-2 border rounded bg-gray-50">
-            <div className="text-sm text-gray-700 font-medium">{c.username}</div>
-            <div className="text-sm text-gray-800 mt-1">{c.comment}</div>
-            <div className="text-xs text-gray-400 mt-1">{new Date(c.createdAt || "").toLocaleString()}</div>
+          <div key={c._id} className="p-4 bg-gray-100 rounded-md">
+            <div className="text-xs text-black font-bold font-[poppins]">{c.username}</div>
+            <div className="text-xs text-gray-500 font-medium mt-1 font-[poppins]">{c.comment}</div>
+            <div className="text-xs text-gray-500 mt-1 font-semibold font-[urbanist]">{new Date(c.createdAt || "").toLocaleString()}</div>
           </div>
         ))}
       </div>
@@ -80,7 +79,7 @@ export default function CommentSection({ materialTitle }: { materialTitle: strin
       <textarea
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
-        className="w-full mt-3 p-2 border rounded"
+        className="resize-none outline-0 w-full text-xs mt-3 p-4 border border-gray-200 rounded-xl"
         rows={3}
         placeholder="Tulis komentar..."
       />

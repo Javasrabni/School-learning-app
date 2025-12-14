@@ -209,12 +209,12 @@ const SplashOnboarding = () => {
                             <span className="flex flex-col gap-1 text-center">
                                 {onRegister ? (
                                     <>
-                                        <h1 className="font-bold">{i.h1}</h1>
+                                        <h1 className="font-bold text-xl">{i.h1}</h1>
                                         <p className="text-stone-400 text-sm">{i.p}</p>
                                     </>
                                 ) : (
                                     <>
-                                        <h1 className="font-bold">Silakan Login!</h1>
+                                        <h1 className="font-bold text-xl">Silakan Login!</h1>
                                         <p className="text-stone-400 text-sm">Masuk dengan akun kamu yang telah terdaftar</p>
                                     </>
                                 )}
